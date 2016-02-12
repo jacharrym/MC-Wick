@@ -1,18 +1,13 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import time
-import signal
-from itertools import *
-import itertools 
 import copy
 import sys
 
-## =====================
-## Python program to solve the Wick's theorem for a chain of operators in latex format. 
-## =====================
-
 ## General Funtions 
 ## =====================
+
+## Return the subindex of the operator
+def lower(String):
+	String = String.lower()
+	return String
 
 def index ( operator ) :
 	auxindex = operator.split("_")[1]
@@ -44,8 +39,8 @@ def index ( operator ) :
 	index1 = auxindex[1]
 	index2 = auxindex[2]
 
-	order1 = order[index1]	
-	order2 = order[index2]	
+	order1 = order[lower(index1)]
+	order2 = order[lower(index2)]
 
 	if order1 > order2:
 		output = index2+index1
@@ -56,97 +51,101 @@ def index ( operator ) :
 
 ## Return the sign "1" for "+" and "-1" for "-"
 def valueOfSign (sign) :
-	if sign == "+":
+	if sign >= 1 :
 		return 1
-	elif sign == "-":
+	elif sign <= -1:
 		return -1
 
-listName = sys.argv[1]
-listFile = open (listName, "r")
-listLines = listFile.readlines()
+def removeDeltas ( vectorOfCombinations ) :
 
-outputName = listName + ".out"
-outputFile = open (outputName, "w")
+	#print "initial vector"
+	#for i in range(0,len(vectorOfCombinations)):
+	#	print  vectorOfCombinations[i].sign, vectorOfCombinations[i].chain
 
-vanishVector = list()
-equalVector = list()
+	vanishVector = dict()
+	equalVector = dict()
 
-for i in range(0,len(listLines)) :
-	line1 = listLines[i]
-	sign1 = line1[0]
+	for i in range(0,len(vectorOfCombinations)) :
+		line1 = vectorOfCombinations[i].chain
+		sign1 = vectorOfCombinations[i].sign
 
-	line1 = line1[1:] #Remove the sign
-	auxLine1 = line1.split("\delt") # Split the deltas
-	del auxLine1[0] #Remove the blank space before the first delta
+		for j in range(i+1,len(vectorOfCombinations)):
 
-	for j in range(i+1,len(listLines)):
+			if (i not in vanishVector and j not in vanishVector) and \
+			(i not in equalVector and j not in equalVector): # We do not need to consider the terms that will vanish
+				line2 = vectorOfCombinations[j].chain
+				sign2 = vectorOfCombinations[j].sign
 
-		if (i not in vanishVector and j not in vanishVector) and \
-		(i not in equalVector and j not in equalVector): # We do not need to consider the terms that will vanish
-			line2 = listLines[j]
-			sign2 = line2[0]
-			line2 = line2[1:] #Remove the sign
-			auxLine2 = line2.split("\delt") # Split the deltas
-			del auxLine2[0] #Remove the blank space before the first delta
+				auxVector = list() 
 
-			auxVector = list() 
+				for delta1 in line1 :
+				
+					index1 = index(delta1)
+					for delta2 in line2 :
+						index2 = index(delta2)
+						if index1 == index2 : 
+							equalIndexes = True
+							auxVector.append(equalIndexes)
+							break
+				# If the amount of equalIndexes found it is the same number of kronecker delta with opposite signs, the
+				# these terms will vanish
+				if len(auxVector) == len(line1) and valueOfSign(sign1) == -valueOfSign(sign2) :	
+					## print i,sign1,auxLine1,j,sign2,auxLine2 # These terms will vanish
+					# Save the index of those terms
+					vanishVector[i] = j #vanishVector.append(i) 
+					vanishVector[j] = i #vanishVector.append(j) 
 
-			for delta1 in auxLine1 :
-			
-				index1 = index(delta1)
-				for delta2 in auxLine2 :
-					index2 = index(delta2)
-					if index1 == index2 : 
-						equalIndexes = True
-						auxVector.append(equalIndexes)
-						break
-			# If the amount of equalIndexes found it is the same number of kronecker delta with opposite signs, the
-			# these terms will vanish
-			if len(auxVector) == len(auxLine1) and valueOfSign(sign1) == -valueOfSign(sign2) :	
-				## print i,sign1,auxLine1,j,sign2,auxLine2 # These terms will vanish
-				# Save the index of those terms
-				vanishVector.append(i) 
-				vanishVector.append(j) 
-
-			# these terms are equak
-			if len(auxVector) == len(auxLine1) and valueOfSign(sign1) == valueOfSign(sign2) :	
-				## print i,sign1,auxLine1,j,sign2,auxLine2 # These terms will vanish
-				# Save the index of those terms
-				equalVector.append(i) 
-				equalVector.append(j) 
+				# these terms are equal
+				if len(auxVector) == len(line1) and valueOfSign(sign1) == valueOfSign(sign2) :	
+					## print i,sign1,auxLine1,j,sign2,auxLine2 # These terms will vanish
+					# Save the index of those terms
+					equalVector[i] = j	#equalVector.append(i) 
+					equalVector[j] = i	#equalVector.append(j) 
 
 
-##print vanishVector
+#	print "equalvector", equalVector
+#	print "vanishvector", vanishVector
 
+	auxVectorOfCombinations = list()
+	if len (equalVector) == 0 and len(vanishVector) == 0  :
+		#print "There are no equal terms"
+		# Nothing to do, just return the original vector
+		auxVectorOfCombinations = vectorOfCombinations
+	else :
+		for i in range(0,len(vectorOfCombinations)) :
+			if i in equalVector and equalVector[i] >= 0 :
+				vectorOfCombinations[i].sign= vectorOfCombinations[i].sign + \
+					vectorOfCombinations[equalVector[i]].sign 
+				#print vectorOfCombinations[i].sign, vectorOfCombinations[i].chain
+				# copy the objet 
+				auxObject = copy.deepcopy (vectorOfCombinations[i])
+				auxVectorOfCombinations.append(auxObject)
+				equalVector[equalVector[i]] = -1
 
-if len (vanishVector) == 0  :
-	print "There are no opposite terms"
-else :
-	for i in range(0,len(listLines)) :
+			if i in vanishVector and vanishVector[i] >= 0 :
+				vectorOfCombinations[i].sign= vectorOfCombinations[i].sign + \
+					vectorOfCombinations[vanishVector[i]].sign 
+				#print vectorOfCombinations[i].sign, vectorOfCombinations[i].chain
+				# copy the objet, if it is nonzero
+				if vectorOfCombinations[i].sign != 0 :
+					auxObject = copy.deepcopy (vectorOfCombinations[i])
+					auxVectorOfCombinations.append(auxObject)
+				vanishVector[vanishVector[i]] = -1
 
-		if i not in vanishVector :
-			line1 = listLines[i]
-			line1 = line1.replace("\n","")
-			print line1
-			outputFile.write ( line1 + "\n" )
+			elif i not in equalVector and i not in vanishVector :
+				#print vectorOfCombinations[i].sign, vectorOfCombinations[i].chain
+				# copy the objet 
+				auxObject = copy.deepcopy (vectorOfCombinations[i])
+				auxVectorOfCombinations.append(auxObject)
 
-equalVector = equalVector [0::2]
+	#print "aux vector"
+	#for i in range(0,len(auxVectorOfCombinations)) :
+	#	print auxVectorOfCombinations[i].sign, auxVectorOfCombinations[i].chain
 
-if len (equalVector) == 0  :
-	print "There are no equal terms"
-else :
-	for i in range(0,len(listLines)) :
+	if len(equalVector) > 0 or len(vanishVector) > 0  :
+		auxVectorOfCombinations = removeDeltas ( auxVectorOfCombinations ) 
 
-		if i in equalVector :
-			line1 = listLines[i]
-			line1 = line1.replace("\n","")
-			sign = line1[0]
-			line1 = line1[1:]
-			line1 = sign + "2" + line1
+	return auxVectorOfCombinations
 
-			print line1
-			outputFile.write ( line1 + "\n" )
-
-
-listFile.close()
-outputFile.close()
+	#listFile.close()
+	#outputFile.close()

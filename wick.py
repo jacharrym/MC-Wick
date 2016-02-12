@@ -1,6 +1,8 @@
+#!/usr/bin/python
 # Module wick
 
 import copy
+import removeDeltas
 
 # Global variables
 typeOfCombination = {
@@ -23,7 +25,6 @@ class subOperators(object):
 		self.sign = sign
 		self.string = string
 		self.scalar = scalar
-
 
 ## Convert a list to a string
 def longformat ( vector ) :
@@ -246,15 +247,15 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 def wick (Vi) :
 
 
-	print "== Initial"
-	print "\t",longformat(Vi.string)
+	##print "== Initial"
+	##print "\t",longformat(Vi.string)
 
-	print "== Fermi vacuum"
+	##print "== Fermi vacuum"
 	Vi.string = transformToFermiSpace ( Vi.string )
-	print "\t",longformat(Vi.string)
+	##print "\t",longformat(Vi.string)
 
 	## Zero 
-	sign = 1
+	sign = Vi.sign
 	NV, sign = normalOrder (Vi.string,sign)
 
 	matrixOfCombinations = list()
@@ -265,27 +266,29 @@ def wick (Vi) :
 		matrixOfCombinations.append( list() )
 
 	# add the zero term to the matrix
-	matrixOfCombinations[0].append ( operatorchain ( sign,longformat(NV) ) )
+	matrixOfCombinations[0].append ( operatorchain ( sign,NV ) )
 
 	auxint = 0
 	matrixOfCombinations, auxint, auxint, outputVector, outputValue = generateCombinations ( \
 		matrixOfCombinations, totalCombinations, 0, Vi.string, operatorchain (1,""))
 
 	## Printing the values
-	print "original"
+	##print "original"
 	for i in range(0, totalCombinations+1):
-		print typeOfCombination[i]
+	##	print typeOfCombination[i]
 		for j in range(0,len(matrixOfCombinations[i])):
-			print "\t",matrixOfCombinations[i][j].chain
+			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
+	##		print "\t",matrixOfCombinations[i][j].sign, \
+	##			matrixOfCombinations[i][j].chain
 
-	## Checking the zero terms
+
+	## Checking the zero terms. Anhilitation operators to the rigth or kronecker delta with mixed index
 	auxMatrixOfCombinations = copy.deepcopy(matrixOfCombinations)
 	for i in range(0, totalCombinations+1):
 		# Select only the non-zero terms after operates over the HF wavefunction in the fermi vacuum
 		if len (matrixOfCombinations[i]) > 0 :
 ## 		Here we need to check the doubles indexes (iJ) 
 			for j in range(0,len(matrixOfCombinations[i])):
-				print matrixOfCombinations[i][j].chain[-1]
 				# It will remove all terms with an anhiliation operator to the left
 				if dagger(matrixOfCombinations[i][j].chain[-1]) == 0 and \
 				"\delta_{" not in (matrixOfCombinations[i][j].chain[-1]) : 
@@ -297,7 +300,7 @@ def wick (Vi) :
 						auxMatrixOfCombinations[i][j] = None
 						break
 
-	print "remove zeros"
+	##print "Remove zero terms"
 
 	# Clean all zero terms for each type of combinations
 	for i in range(len(auxMatrixOfCombinations)-1,-1, -1):
@@ -305,12 +308,25 @@ def wick (Vi) :
 	# Clean all zero combinations 	
 	auxMatrixOfCombinations = filter (None,  auxMatrixOfCombinations )
 
+	##for i in range(0,len(auxMatrixOfCombinations)):
+	##	for j in range(0, len(auxMatrixOfCombinations[i])):
+	##		print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+
+# test
+#	auxMatrixOfCombinations[0].append( operatorchain (-3,["\delta_{pr}","\delta_{QS}"]) )
+#	auxMatrixOfCombinations[0].append( operatorchain (1,["\delta_{ik}","\delta_{QS}"]) )
+
+	# Sum terms	
+	for i in range(0,len(auxMatrixOfCombinations)):
+		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i] ) 
+
+	##print "Sum terms"
 	for i in range(0,len(auxMatrixOfCombinations)):
 		for j in range(0, len(auxMatrixOfCombinations[i])):
-			print auxMatrixOfCombinations[i][j].chain
+			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
-
+	return auxMatrixOfCombinations
 ## 
 
 
@@ -319,13 +335,13 @@ def wick (Vi) :
 ################################################
 
 #V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}" ]  
-V0 = subOperators (+1,["a_{p}^{\dagger}", "a_{Q}^{\dagger}","\hat{H}","a_{r}","a_{S}" ], "" )
-V1 = subOperators (+1,[V0.string[1], V0.string[0], V0.string[3], V0.string[4], V0.string[2]], "" )
-if "{H}" in V1.string[4] :
-	V1.scalar = "E"
-	del V1.string[4]
+#V0 = subOperators (+1,["a_{p}^{\dagger}", "a_{Q}^{\dagger}","\hat{H}","a_{r}","a_{S}" ], "" )
+#V1 = subOperators (-1,[V0.string[1], V0.string[0], V0.string[3], V0.string[4], V0.string[2]], "" )
+#if "{H}" in V1.string[4] :
+#	V1.scalar = "E"
+#	del V1.string[4]
 
 # call wick
-wick (V1)
+#wick (V1)
 
 
