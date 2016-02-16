@@ -122,12 +122,13 @@ def evaluateOrder ( vector ):
 
 ## Chain of operator object
 class operatorchain(object):
-	def __init__(self,sign,chain):
+	def __init__(self,sign,chain,scalar):
 		self.sign = sign
 		self.chain = chain
+		self.scalar = scalar
 
-## Commutator object
-class commutator(object):
+## Contraction object
+class contraction(object):
 	def __init__(self,sign,string):
 		self.sign = sign
 		self.string = string
@@ -142,15 +143,15 @@ def evaluateContraction ( operator1, operator2 ) :
 
 		if dagger1 == dagger2 :
 			## \contraction{a_i}{a_j} = \contraction{a_i^{\dagger}}{a_j^{\dagger}} = 0
-			outputCommutator = commutator (0,"")
+			outputContraction = contraction (0,"")
 		else : 	
 			## \contraction{a_i}{a_j^{\dagger}} = \delta_{ij}
 			if dagger1 == 0 and dagger2 == 1 :
-				outputCommutator = commutator (1,"\delta_{"+index1+index2+"}")
+				outputContraction = contraction (1,"\delta_{"+index1+index2+"}")
 			## \contraction{a_i^{\dagger}}{a_j} = 0
 			elif dagger1 == 1 and dagger2 == 0 :
-				outputCommutator = commutator (0,"")
-		return outputCommutator
+				outputContraction = contraction (0,"")
+		return outputContraction
 
 ## Remove an operator from the vector
 def removeOperator ( vector, index ) :
@@ -185,13 +186,13 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 			sign = 1
 			auxSign = 1
 
-			auxCommutator = evaluateContraction ( vector[m], vector[n] )
+			auxContraction = evaluateContraction ( vector[m], vector[n] )
 
 			removeOperator(outputV,m)
 			removeOperator(outputV,n-1)
 			
 			auxOutputV = list(outputV) ## Not ordered
-			sign = sign * auxCommutator.sign
+			sign = sign * auxContraction.sign
 
 			# Rule C of Wick's theorem for fermions:
 			#   rearrange the operators (introducing minus signs whenever the order of two fermionic operators is swapped) to ensure the contracted terms are adjacent in the string.
@@ -205,9 +206,9 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 			outputV, auxSign = normalOrder(outputV,auxSign) ## Ordered, only it is used for the ncombination-1
 
 			if auxSign == 0:
-				value = operatorchain (0,["+0"])
+				value = operatorchain (0,["+0"],"")
 			else :
-				value = operatorchain (auxSign,[auxCommutator.string])
+				value = operatorchain (auxSign,[auxContraction.string],"")
 
 			auxvalue = copy.copy(value)
 
@@ -256,6 +257,7 @@ def wick (Vi) :
 
 	## Zero 
 	sign = Vi.sign
+	scalar = Vi.scalar
 	NV, sign = normalOrder (Vi.string,sign)
 
 	matrixOfCombinations = list()
@@ -266,20 +268,17 @@ def wick (Vi) :
 		matrixOfCombinations.append( list() )
 
 	# add the zero term to the matrix
-	matrixOfCombinations[0].append ( operatorchain ( sign,NV ) )
+	matrixOfCombinations[0].append ( operatorchain ( sign,NV,scalar ) )
 
 	auxint = 0
 	matrixOfCombinations, auxint, auxint, outputVector, outputValue = generateCombinations ( \
-		matrixOfCombinations, totalCombinations, 0, Vi.string, operatorchain (1,""))
+		matrixOfCombinations, totalCombinations, 0, Vi.string, operatorchain (1,"",""))
 
-	## Printing the values
-	##print "original"
+	## Save the sign and "scalar"
 	for i in range(0, totalCombinations+1):
-	##	print typeOfCombination[i]
 		for j in range(0,len(matrixOfCombinations[i])):
 			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
-	##		print "\t",matrixOfCombinations[i][j].sign, \
-	##			matrixOfCombinations[i][j].chain
+			matrixOfCombinations[i][j].scalar = scalar
 
 
 	## Checking the zero terms. Anhilitation operators to the rigth or kronecker delta with mixed index
@@ -308,22 +307,24 @@ def wick (Vi) :
 	# Clean all zero combinations 	
 	auxMatrixOfCombinations = filter (None,  auxMatrixOfCombinations )
 
-	##for i in range(0,len(auxMatrixOfCombinations)):
-	##	for j in range(0, len(auxMatrixOfCombinations[i])):
-	##		print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+##	print "non zero wick"
+##	for i in range(0,len(auxMatrixOfCombinations)):
+##		for j in range(0, len(auxMatrixOfCombinations[i])):
+##			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 # test
 #	auxMatrixOfCombinations[0].append( operatorchain (-3,["\delta_{pr}","\delta_{QS}"]) )
 #	auxMatrixOfCombinations[0].append( operatorchain (1,["\delta_{ik}","\delta_{QS}"]) )
 
 	# Sum terms	
+	repeated = True
 	for i in range(0,len(auxMatrixOfCombinations)):
-		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i] ) 
+		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
 	##print "Sum terms"
-	for i in range(0,len(auxMatrixOfCombinations)):
-		for j in range(0, len(auxMatrixOfCombinations[i])):
-			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+##	for i in range(0,len(auxMatrixOfCombinations)):
+##		for j in range(0, len(auxMatrixOfCombinations[i])):
+##			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations
