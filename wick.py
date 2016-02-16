@@ -249,11 +249,11 @@ def wick (Vi) :
 
 
 	##print "== Initial"
-	##print "\t",longformat(Vi.string)
+	print "\t",longformat(Vi.string)
 
 	##print "== Fermi vacuum"
 	Vi.string = transformToFermiSpace ( Vi.string )
-	##print "\t",longformat(Vi.string)
+	print "\t",longformat(Vi.string)
 
 	## Zero 
 	sign = Vi.sign
@@ -307,10 +307,10 @@ def wick (Vi) :
 	# Clean all zero combinations 	
 	auxMatrixOfCombinations = filter (None,  auxMatrixOfCombinations )
 
-##	print "non zero wick"
-##	for i in range(0,len(auxMatrixOfCombinations)):
-##		for j in range(0, len(auxMatrixOfCombinations[i])):
-##			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	print "non zero wick"
+	for i in range(0,len(auxMatrixOfCombinations)):
+		for j in range(0, len(auxMatrixOfCombinations[i])):
+			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 # test
 #	auxMatrixOfCombinations[0].append( operatorchain (-3,["\delta_{pr}","\delta_{QS}"]) )
@@ -321,10 +321,10 @@ def wick (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	##print "Sum terms"
-##	for i in range(0,len(auxMatrixOfCombinations)):
-##		for j in range(0, len(auxMatrixOfCombinations[i])):
-##			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	print "Sum terms"
+	for i in range(0,len(auxMatrixOfCombinations)):
+		for j in range(0, len(auxMatrixOfCombinations[i])):
+			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations
