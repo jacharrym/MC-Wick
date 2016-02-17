@@ -165,6 +165,15 @@ expandedTerms = sumTerms.sumTerms(expandedTerms)
 for i in expandedTerms :
 	print i.sign, i.scalar, i.chain
 
+alphaSpecies = ("h","p")
+betaSpecies = ("H","P") 
+for i in betaSpecies: 
+	for j in alphaSpecies: 
+		for k in betaSpecies: 
+			for l in alphaSpecies: 
+				print j+i+"-"+l+k
+		print ""
+
 
 ## =====================
 ## END PROGRAM
