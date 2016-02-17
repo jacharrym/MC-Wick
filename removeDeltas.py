@@ -10,9 +10,11 @@ def lower(String):
 	return String
 
 def index ( operator ) :
-	auxindex = operator.split("_")[1]
-	initial = auxindex.find("{")
-	final = auxindex.find("}")
+
+	auxindex = operator.split("_")
+
+	#initial = auxindex.find("{")
+	#final = auxindex.find("}")
 
 	order = {
 	"a":1,
@@ -36,16 +38,21 @@ def index ( operator ) :
 	"s":19,
 	}
 
-	index1 = auxindex[1]
-	index2 = auxindex[2]
+	if "delta" in auxindex[0] :
 
-	order1 = order[lower(index1)]
-	order2 = order[lower(index2)]
+		index1 = auxindex[1][1]
+		index2 = auxindex[1][2]
+		order1 = order[lower(index1)]
+		order2 = order[lower(index2)]
 
-	if order1 > order2:
-		output = index2+index1
+		if order1 > order2:
+			output = index2+index1
+		else :
+			output = index1+index2
+
 	else :
-		output = index1+index2
+
+		output = auxindex[1][1]
 
 	return output
 
@@ -67,22 +74,23 @@ def removeDeltas ( vectorOfCombinations, repeated ) :
 
 	for i in range(0,len(vectorOfCombinations)) :
 		line1 = vectorOfCombinations[i].chain
+		#print "l1", line1
 		sign1 = vectorOfCombinations[i].sign
-
 		for j in range(i+1,len(vectorOfCombinations)):
-
 			if (i not in vanishVector and j not in vanishVector) and \
 			(i not in equalVector and j not in equalVector): # We do not need to consider the terms that will vanish
 				line2 = vectorOfCombinations[j].chain
+
 				sign2 = vectorOfCombinations[j].sign
 
+				#print "l2", line2
 				auxVector = list() 
 
 				for delta1 in line1 :
-				
 					index1 = index(delta1)
 					for delta2 in line2 :
 						index2 = index(delta2)
+						#print index1, index2
 						if index1 == index2 : 
 							equalIndexes = True
 							auxVector.append(equalIndexes)

@@ -6,6 +6,7 @@ import copy
 import sys
 import wick
 import sumTerms
+import removeSinglesExcitations
 from wick import operatorchain
 
 ## subOperators
@@ -66,7 +67,8 @@ def calculateEpsilon ( vector ) :
 
 nmax = 2
 #pQrS
-V0 = subOperators (+1,["a_{p}^{\dagger}", "a_{Q}^{\dagger}","\hat{H}","a_{r}","a_{S}" ], "" )
+V0 = subOperators (+1,["a_{a}^{\dagger}", "a_{B}^{\dagger}","\hat{H}","a_{k}","a_{C}" ], "" )
+V0 = subOperators (+1,["a_{a}^{\dagger}", "a_{J}^{\dagger}","\hat{H}","a_{k}","a_{L}" ], "" )
 
 # wX \hat{A} yZ element
 # = [X^\dagger w^\dagger , \hat{A} y Z ]_+
@@ -119,6 +121,11 @@ if "{H}" in V4.string[0] :
 	V4.scalar = ["E"]
 	del V4.string[0]
 
+#print V1.scalar, V1.string
+#print V2.scalar, V2.string
+#print V3.scalar, V3.string
+#print V4.scalar, V4.string
+
 #reunite all four terms
 allV = [V1,V2,V3,V4]
 newV = list()
@@ -139,13 +146,18 @@ for Vi in newV :
 	for ncombinations in Vi:
 		# number of terms (deltas)
 		for iterm in ncombinations:
+			# remove hamiltoniand matrix elements between ground state and single excitations determinants.
+			removeiterm = removeSinglesExcitations.removeSinglesExcitations(iterm)
+			if not removeiterm :
 			# Here we expand for each "scalar"
-			for iscalar in iterm.scalar:
-				auxSign = 0
-				auxSign, auxscalar = getSignFromScalar(auxSign,iscalar)
-				auxSign = auxSign * iterm.sign
-				newTerm = operatorchain ( auxSign, iterm.chain, auxscalar)
-				expandedTerms.append (newTerm)	
+			# Sum all terms in the propagator matrix element
+				for iscalar in iterm.scalar:
+					auxSign = 0
+					auxSign, auxscalar = getSignFromScalar(auxSign,iscalar)
+					auxSign = auxSign * iterm.sign
+					newTerm = operatorchain ( auxSign, iterm.chain, auxscalar)
+					expandedTerms.append (newTerm)	
+
 
 # Sum all terms in the propagator matrix element
 expandedTerms = sumTerms.sumTerms(expandedTerms)
