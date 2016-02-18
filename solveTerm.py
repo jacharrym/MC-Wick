@@ -7,6 +7,16 @@ import sumTerms
 import removeSinglesExcitations
 from wick import operatorchain
 
+global occupiedIndexesAlpha
+global virtualIndexesAlpha
+global occupiedIndexesBeta
+global virtualIndexesBeta
+
+occupiedIndexesAlpha = ("i","j","k","l","m","n","o","p","q","r","s")
+virtualIndexesAlpha  = ("a","b","c","d","e","f","g","h")
+occupiedIndexesBeta  = ("I","J","K","L","M","N","O","P","Q","R","S")
+virtualIndexesBeta  = ("A","B","C","D","E","F","G","H")
+
 ## subOperators
 class subOperators(object):
 	def __init__(self,sign,string,scalar):
@@ -56,8 +66,20 @@ def calculateEpsilon ( vector ) :
 
 	output = list()
 	for operator in vector :
-		epsilon = "-\epsilon_{"
-		epsilon = epsilon + index(operator)
+
+		indexi = index(operator)
+		if indexi.isupper() : # beta species
+			if indexi in occupiedIndexesBeta  : #
+				epsilon = "-\epsilon_{"
+			if indexi in virtualIndexesBeta  : #
+				epsilon = "+\epsilon_{"
+		if indexi.islower() : # alpha species
+			if indexi in occupiedIndexesAlpha : #
+				epsilon = "-\epsilon_{"
+			if indexi in virtualIndexesAlpha : #
+				epsilon = "+\epsilon_{"
+
+		epsilon = epsilon + indexi
 		epsilon = epsilon +"}"
 		output.append(epsilon)
 
@@ -119,10 +141,10 @@ def solveTerm (nmax,V0):
 		V4.scalar = ["E"]
 		del V4.string[0]
 
-	#print V1.scalar, V1.string
-	#print V2.scalar, V2.string
-	#print V3.scalar, V3.string
-	#print V4.scalar, V4.string
+	#print V1.sign, V1.scalar, V1.string
+	#print V2.sign, V2.scalar, V2.string
+	#print V3.sign, V3.scalar, V3.string
+	#print V4.sign, V4.scalar, V4.string
 
 	#reunite all four terms
 	allV = [V1,V2,V3,V4]
@@ -132,7 +154,6 @@ def solveTerm (nmax,V0):
 
 		# Perform Wick's theorem
 		auxVi = wick.wick(Vi)
-
 		# save only the non zero terms	
 		if len(auxVi) > 0 :
 			newV.append(auxVi)

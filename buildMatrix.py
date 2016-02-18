@@ -9,7 +9,6 @@ global virtualIndexesAlpha
 global occupiedIndexesBeta
 global virtualIndexesBeta
 
-
 occupiedIndexesAlpha = ("i","j","k","l","m","n","o","p","q","r","s")
 virtualIndexesAlpha  = ("a","b","c","d","e","f","g","h")
 occupiedIndexesBeta  = ("I","J","K","L","M","N","O","P","Q","R","S")
@@ -45,13 +44,9 @@ def getIndexForParticleHole ( i, nOcc, nVir ) :
 
 
 nmax = 2
-#V0 = subOperators (+1,["a_{a}^{\dagger}", "a_{B}^{\dagger}","\hat{H}","a_{c}","a_{D}" ], "" )
-
-#solves one term
-#finalTerms = solveTerm.solveTerm (nmax,V0)
-
 alphaSpecies = ("h","p")
 betaSpecies = ("H","P") 
+
 for i in betaSpecies: 
 	for j in alphaSpecies: 
 		for k in betaSpecies: 
@@ -64,8 +59,37 @@ for i in betaSpecies:
 				indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
 				indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
 				print indexj, indexi, indexl, indexk
-				V0 = subOperators (+1,["a_{"+indexj+"}^{\dagger}", "a_{"+indexi+"}^{\dagger}",\
-							"\hat{H}","a_{"+indexl+"}","a_{"+indexk+"}" ], "" )
+
+				indexj = "a_{"+indexj+"}^{\dagger}"
+				indexi = "a_{"+indexi+"}^{\dagger}"
+				indexl = "a_{"+indexl+"}"
+				indexk = "a_{"+indexk+"}"
+				superOperator = "\hat{H}"
+
+				#solves ther ji-lk term 
+				V0 = subOperators (+1,[indexj,indexi,superOperator,indexl,indexk ], "" )
 				finalTerms = solveTerm.solveTerm (nmax,V0)
 		print ""
+
+nmax = 1
+alphaSpecies = ("h","p")
+betaSpecies = ("H","P") 
+
+for i in alphaSpecies: 
+	for j in alphaSpecies: 
+		nOccup = 0
+		nVirtual = 0
+		print j+"-"+i,
+		indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
+		indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+		print indexj, indexi
+
+		indexj = "a_{"+indexj+"}^{\dagger}"
+		indexi = "a_{"+indexi+"}"
+		superOperator = "\hat{H}"
+
+		#solves ther ji-lk term 
+		V0 = subOperators (+1,[indexj,superOperator,indexi ], "" )
+		finalTerms = solveTerm.solveTerm (nmax,V0)
+print ""
 
