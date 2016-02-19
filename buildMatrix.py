@@ -44,8 +44,10 @@ def getIndexForParticleHole ( i, nOcc, nVir ) :
 
 
 nmax = 2
-alphaSpecies = ("h","p")
-betaSpecies = ("H","P") 
+#alphaSpecies = ("h","p")
+#betaSpecies = ("H","P") 
+alphaSpecies = ("h")
+betaSpecies = ("H") 
 
 for i in betaSpecies: 
 	for j in alphaSpecies: 
@@ -67,13 +69,24 @@ for i in betaSpecies:
 				superOperator = "\hat{H}"
 
 				#solves ther ji-lk term 
+				#V0 = subOperators (+1,[indexj,indexi,superOperator,indexl,indexk ], "" )
+				#finalTerms = solveTerm.solveTerm (nmax,V0)
+
+
+				superOperator = "\hat{V}"
+				#solves ther ji-lk term 
 				V0 = subOperators (+1,[indexj,indexi,superOperator,indexl,indexk ], "" )
 				finalTerms = solveTerm.solveTerm (nmax,V0)
+
 		print ""
 
 nmax = 1
-alphaSpecies = ("h","p")
-betaSpecies = ("H","P") 
+#alphaSpecies = ("h","p")
+#betaSpecies = ("H","P") 
+alphaSpecies = ("h")
+betaSpecies = ("H") 
+
+print "One Particle"
 
 for i in alphaSpecies: 
 	for j in alphaSpecies: 

@@ -89,6 +89,7 @@ def solveTerm (nmax,V0):
 	#nmax = 2
 	#pQrS
 	#V0 = subOperators (+1,["a_{a}^{\dagger}", "a_{B}^{\dagger}","\hat{H}","a_{k}","a_{C}" ], "" )
+	print V0.string
 
 	# wX \hat{A} yZ element
 	# = [X^\dagger w^\dagger , \hat{A} y Z ]_+
@@ -121,30 +122,60 @@ def solveTerm (nmax,V0):
 	V3sign = V12[1].sign * V34[0].sign
 	V4sign = V12[1].sign * V34[1].sign
 
-	# get the "scalar" factor
+	# build each term
 	V1 = subOperators (V1sign,V1string, "" )
-	if "{H}" in V1.string[nmax*2] :
-		V1.scalar = ["E"]
-		del V1.string[nmax*2]
 	V2 = subOperators (V2sign,V2string, "" )
-	if "{H}" in V2.string[nmax] :
-		V2.scalar = ["E"]
-		V2.scalar = V2.scalar + calculateEpsilon(V2.string[nmax+1:])
-		del V2.string[nmax]
 	V3 = subOperators (V3sign,V3string, "" )
-	if "{H}" in V3.string[nmax] :
-		V3.scalar = ["E"]
-		V3.scalar = V3.scalar + calculateEpsilon(V3.string[:nmax])
-		del V3.string[nmax]
 	V4 = subOperators (V4sign,V4string, "" )
-	if "{H}" in V4.string[0] :
-		V4.scalar = ["E"]
-		del V4.string[0]
 
-	#print V1.sign, V1.scalar, V1.string
-	#print V2.sign, V2.scalar, V2.string
-	#print V3.sign, V3.scalar, V3.string
-	#print V4.sign, V4.scalar, V4.string
+	# 	
+	if V0.string[nmax] == "\hat{H}": 
+		if "{H}" in V1.string[nmax*2] :
+			V1.scalar = ["E"]
+			del V1.string[nmax*2]
+		if "{H}" in V2.string[nmax] :
+			V2.scalar = ["E"]
+			V2.scalar = V2.scalar + calculateEpsilon(V2.string[nmax+1:])
+			del V2.string[nmax]
+		if "{H}" in V3.string[nmax] :
+			V3.scalar = ["E"]
+			V3.scalar = V3.scalar + calculateEpsilon(V3.string[:nmax])
+			del V3.string[nmax]
+		if "{H}" in V4.string[0] :
+			V4.scalar = ["E"]
+			del V4.string[0]
+
+	if V0.string[nmax] == "\hat{V}": 
+		print "V yina"	
+		if "{V}" in V1.string[nmax*2] :
+			V12 = copy.copy(V1)
+
+			V1.sign = float(V1.sign*(1.0/4.0))
+			V1.scalar = ["pQ|rS"]
+			V1.string = V1.string [:] + ["a_{p}^{\dagger}", "a_{Q}^{\dagger}","a_{S}","a_{r}"]
+			del V1.string[nmax*2] #{V}
+			print V1.string
+
+			V12.scalar = ["pQ|rQ"]
+			V12.string = V12.string [:] + ["a_{p}^{\dagger}", "a_{r}"]
+			del V12.string[nmax*2] #{V}
+			print V12.string
+
+		if "{V}" in V2.string[nmax] :
+			V2.scalar = ["pq|rs"]
+			del V2.string[nmax]
+		if "{V}" in V3.string[nmax] :
+			V3.scalar = ["pq|rs"]
+			del V3.string[nmax]
+		if "{V}" in V4.string[0] :
+			V4.scalar = ["pq|rs"]
+			del V4.string[0]
+
+
+	print "v1",V1.sign, V1.scalar, V1.string
+	print "v2",V2.sign, V2.scalar, V2.string
+	print "v3",V3.sign, V3.scalar, V3.string
+	print "v4",V4.sign, V4.scalar, V4.string
 
 	#reunite all four terms
 	allV = [V1,V2,V3,V4]
@@ -180,7 +211,7 @@ def solveTerm (nmax,V0):
 
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
-
+	print "Result for term"
 	for i in expandedTerms :
 		print i.sign, i.scalar, i.chain
 

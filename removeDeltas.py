@@ -58,9 +58,9 @@ def index ( operator ) :
 
 ## Return the sign "1" for "+" and "-1" for "-"
 def valueOfSign (sign) :
-	if sign >= 1 :
+	if sign > 0 :
 		return 1
-	elif sign <= -1:
+	elif sign < 0:
 		return -1
 
 def removeDeltas ( vectorOfCombinations, repeated ) :

@@ -192,6 +192,7 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 			removeOperator(outputV,n-1)
 			
 			auxOutputV = list(outputV) ## Not ordered
+
 			sign = sign * auxContraction.sign
 
 			# Rule C of Wick's theorem for fermions:
@@ -274,9 +275,16 @@ def wick (Vi) :
 	matrixOfCombinations, auxint, auxint, outputVector, outputValue = generateCombinations ( \
 		matrixOfCombinations, totalCombinations, 0, Vi.string, operatorchain (1,"",""))
 
+#	print "wick"
+#	for i in range(0,len(matrixOfCombinations)):
+#		for j in range(0, len(matrixOfCombinations[i])):
+#			print i,j,matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
+#
+
 	## Save the sign and "scalar"
 	for i in range(0, totalCombinations+1):
 		for j in range(0,len(matrixOfCombinations[i])):
+
 			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
 			matrixOfCombinations[i][j].scalar = scalar
 
@@ -292,6 +300,11 @@ def wick (Vi) :
 				if dagger(matrixOfCombinations[i][j].chain[-1]) == 0 and \
 				"\delta_{" not in (matrixOfCombinations[i][j].chain[-1]) : 
 					auxMatrixOfCombinations[i][j] = None
+
+				# Remove all terms with "sign" = 0
+				if matrixOfCombinations[i][j].sign == 0  :
+					auxMatrixOfCombinations[i][j] = None
+
 				# It will remove all the dirac deltas between diferent species
 				for k in range(0,len(matrixOfCombinations[i][j].chain)):
 					if "\delta_{" in matrixOfCombinations[i][j].chain[k] and \
@@ -307,16 +320,10 @@ def wick (Vi) :
 	# Clean all zero combinations 	
 	auxMatrixOfCombinations = filter (None,  auxMatrixOfCombinations )
 
-	#print "non zero wick"
-	#for i in range(0,len(auxMatrixOfCombinations)):
-	#	for j in range(0, len(auxMatrixOfCombinations[i])):
-	#		print auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
-
-
-# test
-#	auxMatrixOfCombinations[0].append( operatorchain (1,["\delta_{ik}","\delta_{QS}"],"") )
-#	auxMatrixOfCombinations[0].append( operatorchain (1,["\delta_{ik}","\delta_{QS}"],"") )
-
+#	print "non zero wick"
+#	for i in range(0,len(auxMatrixOfCombinations)):
+#		for j in range(0, len(auxMatrixOfCombinations[i])):
+#			print i,j,auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 	# Sum terms	
 	repeated = True
