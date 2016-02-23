@@ -13,11 +13,25 @@ typeOfCombination = {
 4:"Quadruples, not tested!",
 }
 
+global fermions
+global bosons
+global printZeroValues 
+global occupiedIndexes 
+global dummyIndexes 
+global virtualIndexes 
+global occupiedIndexesB 
+global virtualIndexesB 
+
 fermions = True
 bosons = False
 printZeroValues = False
-occupiedIndexes = ("i","j","k","l","m","n","o","p","q","r","s")
+occupiedIndexes = ("i","j","k","l","m","n","o")
+dummyIndexes = ("p","q","r","s")
+#dummyIndexes = ()
 virtualIndexes = ("a","b","c","d","e","f","g","h")
+occupiedIndexesB = ("I","J","K","L","M","N","O","P","Q","R","S")
+virtualIndexesB = ("A","B","C","D","E","F","G","H")
+
 
 ## subOperators
 class subOperators(object):
@@ -48,6 +62,12 @@ def transformToFermiSpace ( vector ) :
 				auxVector.append ("b_"+"{"+auxIndex+"}^{\dagger}")
 			elif dagger(vector[i]) == 0 :
 				auxVector.append ("b_"+"{"+auxIndex+"}")
+		elif lower(auxIndex) in dummyIndexes :
+			if dagger(vector[i]) == 1 :
+				auxVector.append ("b_"+"{"+auxIndex+"}^{\dagger}")
+			elif dagger(vector[i]) == 0 :
+				auxVector.append ("b_"+"{"+auxIndex+"}")
+
 
 	return auxVector
 
@@ -167,8 +187,21 @@ def checkDoubleIndex ( operator ) :
 	index2 = auxindex[final-1]
 
 	if index1.isupper() and index2.isupper() :
+		#if index1 in occupiedIndexesB and index2 in occupiedIndexesB :
+		#	return True
+		#elif index1 in virtualIndexesB and index2 in virtualIndexesB :
+		#	return True
+		#else :
+		#	return False
+
 		return True
-	elif  index1.islower() and index2.islower() :
+	elif index1.islower() and index2.islower() :
+		#if index1 in occupiedIndexes and index2 in occupiedIndexes :
+		#	return True
+		#elif index1 in virtualIndexes and index2 in virtualIndexes :
+		#	return True
+		#else :
+		#	return False
 		return True
 	else :
 		return False
@@ -211,28 +244,34 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 			else :
 				value = operatorchain (auxSign,[auxContraction.string],"")
 
-			auxvalue = copy.copy(value)
+			auxvalue = copy.deepcopy(value)
 
 			auxvalue.sign =  outputValue.sign*auxvalue.sign
 			sign =  sign*outputValue.sign
 
 #			adjointAuxValue = operatorchain (auxvalue.sign,  symbolOfSign(auxvalue.sign) + value.chain + outputValue.chain + longformat(outputV))
-			##auxvalue.chain =  outputValue.chain + auxvalue.chain
+			#print ". ",outputValue.chain, auxvalue.chain
+			#auxvalue.chain =  outputValue.chain + auxvalue.chain
 
 			if outputValue.chain is not "" :
-				auxvalue.chain.append(outputValue.chain[0])
+				for auxdelta in outputValue.chain :
+				#auxvalue.chain.append(outputValue.chain[0])
+					if "delta" in auxdelta :
+						auxvalue.chain.append(auxdelta)
 			
 			## Check if the chain was already added in the matrix
 #			if not auxvalue.chain in matrixOfCombinations[ntype] and not adjointAuxValue.chain in matrixOfCombinations[ntype] or "+0" in adjointAuxValue.chain :
 
 			if not "+0" in auxvalue.chain :
 				for element in outputV :
+					#print ".e", element
 					auxvalue.chain.append( longformat(element) )
+					#print "..", auxvalue.chain
 				matrixOfCombinations[ntype].append( auxvalue) 
 #			elif "+0" in auxvalue.chain and printZeroValues == True :
 #				matrixOfCombinations[ntype].append( "+0" )
 
-			auxvalue2 = copy.copy(auxvalue)
+			auxvalue2 = copy.deepcopy(auxvalue)
 			auxvalue2.sign = sign
 
 			## Recursion
@@ -250,11 +289,11 @@ def wick (Vi) :
 
 
 	##print "== Initial"
-	#print "\t",longformat(Vi.string)
+	print "\t",longformat(Vi.string)
 
 	##print "== Fermi vacuum"
 	Vi.string = transformToFermiSpace ( Vi.string )
-	#print "\t",longformat(Vi.string)
+	print "\t",longformat(Vi.string)
 
 	## Zero 
 	sign = Vi.sign
@@ -275,11 +314,11 @@ def wick (Vi) :
 	matrixOfCombinations, auxint, auxint, outputVector, outputValue = generateCombinations ( \
 		matrixOfCombinations, totalCombinations, 0, Vi.string, operatorchain (1,"",""))
 
-#	print "wick"
-#	for i in range(0,len(matrixOfCombinations)):
-#		for j in range(0, len(matrixOfCombinations[i])):
-#			print i,j,matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
-#
+	#print "wick"
+	#for i in range(0,len(matrixOfCombinations)):
+	#	for j in range(0, len(matrixOfCombinations[i])):
+	#		print i,j,matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
+
 
 	## Save the sign and "scalar"
 	for i in range(0, totalCombinations+1):
@@ -297,20 +336,35 @@ def wick (Vi) :
 ## 		Here we need to check the doubles indexes (iJ) 
 			for j in range(0,len(matrixOfCombinations[i])):
 				# It will remove all terms with an anhiliation operator to the left
-				if dagger(matrixOfCombinations[i][j].chain[-1]) == 0 and \
-				"\delta_{" not in (matrixOfCombinations[i][j].chain[-1]) : 
-					auxMatrixOfCombinations[i][j] = None
+				#if dagger(matrixOfCombinations[i][j].chain[-1]) == 0 and \
+				#"\delta_{" not in (matrixOfCombinations[i][j].chain[-1]) : 
+				#	auxMatrixOfCombinations[i][j] = None
 
 				# Remove all terms with "sign" = 0
 				if matrixOfCombinations[i][j].sign == 0  :
+
+	#				print "z", matrixOfCombinations[i][j].chain 
 					auxMatrixOfCombinations[i][j] = None
 
-				# It will remove all the dirac deltas between diferent species
+				# It will remove all the kronecker deltas between diferent species, and between occupied - virtual index
 				for k in range(0,len(matrixOfCombinations[i][j].chain)):
 					if "\delta_{" in matrixOfCombinations[i][j].chain[k] and \
 					not ( checkDoubleIndex( matrixOfCombinations[i][j].chain[k]) ) :
+
+	#					print "dd", matrixOfCombinations[i][j].chain
 						auxMatrixOfCombinations[i][j] = None
 						break
+
+					# It will remove all terms with an anhiliation operator to the left
+					if not "\delta_{" in matrixOfCombinations[i][j].chain[k] :
+						if dagger(matrixOfCombinations[i][j].chain[k]) == 0 and \
+						index(matrixOfCombinations[i][j].chain[k]) not in dummyIndexes :	
+
+	#						print "nd", matrixOfCombinations[i][j].chain
+							auxMatrixOfCombinations[i][j] = None
+							break
+
+
 
 	##print "Remove zero terms"
 
@@ -320,20 +374,20 @@ def wick (Vi) :
 	# Clean all zero combinations 	
 	auxMatrixOfCombinations = filter (None,  auxMatrixOfCombinations )
 
-#	print "non zero wick"
-#	for i in range(0,len(auxMatrixOfCombinations)):
-#		for j in range(0, len(auxMatrixOfCombinations[i])):
-#			print i,j,auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	#print "non zero wick"
+	#for i in range(0,len(auxMatrixOfCombinations)):
+	#	for j in range(0, len(auxMatrixOfCombinations[i])):
+	#		print i,j,auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 	# Sum terms	
 	repeated = True
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	#print "Sum terms"
-	#for i in range(0,len(auxMatrixOfCombinations)):
-	#	for j in range(0, len(auxMatrixOfCombinations[i])):
-	#		print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	print "Sum terms"
+	for i in range(0,len(auxMatrixOfCombinations)):
+		for j in range(0, len(auxMatrixOfCombinations[i])):
+			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations
@@ -344,13 +398,20 @@ def wick (Vi) :
 ################################################
 
 #V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}" ]  
-#V0 = subOperators (+1,["a_{p}^{\dagger}", "a_{Q}^{\dagger}","\hat{H}","a_{r}","a_{S}" ], "" )
+
+#V0 = subOperators (+1,["a_{a}","a_{b}", "a_{c}","a_{d}^{\dagger}", "a_{e}^{\dagger}","a_{f}^{\dagger}"], "" )
+
+#V0 = subOperators (+1,["a_{p}^{\dagger}", 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{a}', "a_{i}^{\dagger}"], "" )
+
+#V0 = subOperators (+1,['a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{i}', 'a_{a}^{\dagger}'], "" )
+
+#V0 = subOperators (+1,["a_{a}^{\dagger}"], "" )
 #V1 = subOperators (-1,[V0.string[1], V0.string[0], V0.string[3], V0.string[4], V0.string[2]], "" )
 #if "{H}" in V1.string[4] :
 #	V1.scalar = "E"
 #	del V1.string[4]
 
 # call wick
-#wick (V1)
+#wick (V0)
 
 

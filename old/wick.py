@@ -19,12 +19,19 @@ import sys
 V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}" ]  
 V0 = ["a_{Q}^{\dagger}", "a_{p}^{\dagger}","a_{r}","a_{S}","a_{t}","a_{u}" ]  
 V0 = ["a_{Q}^{\dagger}", "a_{p}^{\dagger}","a_{r}","a_{S}"]  
+V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}"]  
+V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}", "a_{i}", "a_{a}^{\dagger}" ]
+
+V0 = ["a_{j}","a_{i}", "a_{k}^{\dagger}", "a_{l}^{\dagger}" ]
+V0 = ["a_{p}", "a_{q}^{\dagger}"]  
 
 fermions = True
 bosons = False
 printZeroValues = False
-occupiedIndexes = ("i","j","k","l","m","n","o","p","q","r","s")
-virtualIndexes = ("a","b","c","d","e","f","g","h")
+#occupiedIndexes = ("i","j","k","l","m","n","o","p","q","r","s")
+occupiedIndexes = ("")
+#virtualIndexes = ("a","b","c","d","e","f","g","h")
+virtualIndexes = ("i","j","k","l","p","q")
 
 #Generate the terms
 

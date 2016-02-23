@@ -2,14 +2,33 @@
 # -*- coding: utf-8 -*-
 import time
 import signal
-from itertools import *
-import itertools 
 import copy
 import sys
+from wick import operatorchain
 
-## =====================
-## Python program to solve the Wick's theorem for a chain of operators in latex format. 
-## =====================
+global order
+order = {
+"a":1,
+"b":2,
+"c":3,
+"d":4,
+"e":5,
+"f":6,
+"g":7,
+"h":8,
+"i":9,
+"j":10,
+"k":11,
+"l":12,
+"m":13,
+"n":14,
+"o":15,
+"p":16,
+"q":17,
+"r":18,
+"s":19,
+}
+
 
 ## General Funtions 
 ## =====================
@@ -19,35 +38,12 @@ def lower(String):
 	return String
 
 def indexDelta ( delta ) :
-	
 	auxindex = delta.split("_")[1]
 	initial = auxindex.find("{")
 	final = auxindex.find("}")
 
-	order = {
-	"a":1,
-	"b":2,
-	"c":3,
-	"d":4,
-	"e":5,
-	"f":6,
-	"g":7,
-	"h":8,
-	"i":9,
-	"j":10,
-	"k":11,
-	"l":12,
-	"m":13,
-	"n":14,
-	"o":15,
-	"p":16,
-	"q":17,
-	"r":18,
-	"s":19,
-	}
 	index1 = auxindex[1]
 	index2 = auxindex[2]
-
 	order1 = order[lower(index1)]	
 	order2 = order[lower(index2)]	
 
@@ -70,52 +66,89 @@ def symbolOfSign (sign) :
 		return "+"
 	elif sign == -1:
 		return "-"
+def setIndex ( integral, sign, exchange ) :
 
-listName = sys.argv[1]
-listFile = open (listName, "r")
-listLines = listFile.readlines()
+	dummyIndex = ("p","q","r","s")	
 
-outputName = listName + ".out"
-outputFile = open (outputName, "w")
-
-integral = "pqrs"
-integral = "pQrS"
-includeExchange = False
-
-for i in range(0,len(listLines)) :
-	line1 = listLines[i]
-	sign1 = valueOfSign(line1[0])
-
-	line1 = line1[1:] #Remove the sign
-#	print line1
-	auxLine1 = line1.split("\delt") # Split the deltas
-#	print auxLine1
-	del auxLine1[0] #Remove the blank space before the first delta
-	auxIntegral = integral
-	addDelta = " "
-	for j in auxLine1 :	
-		if ( indexDelta(j)[1] in auxIntegral or indexDelta(j)[0] in auxIntegral ) : 
-			auxIntegral = auxIntegral.replace( indexDelta(j)[1], indexDelta(j)[0] )
+	shift = 0
+	i = 0
+	for index in dummyIndex:
+		if index in integral:
+			print integral
+			integral = integral.replace(dummyIndex[i],dummyIndex[i-shift])
+			print integral
 		else :
-			addDelta = addDelta + "\delta_{"+indexDelta(j)+"}"
-		
-	int1 = auxIntegral[0:2]
-	int2 = auxIntegral[2:4]
-	auxInt1 = indexDelta("_{"+int1+"}")
-	auxInt2 = indexDelta("_{"+int2+"}")
-		
-	if auxInt1 == int1 :
-		sign1 = sign1
-	else :
-		sign1 = -1*sign1
-	if auxInt2 == int2 :
-		sign1 = sign1
-	else :
-		sign1 = -1*sign1
-			
+			shift = shift + 1
+		i = i + 1
 
-	print symbolOfSign(sign1)+"\\langle "+auxInt1+"||"+auxInt2+" \\rangle"+addDelta
-					
+	if exchange :
+		i = integral[0]
+		j = integral[1]
+		k = integral[2]
+		l = integral[3]
 
-listFile.close()
-outputFile.close()
+		ii = order[lower(i)]	
+		jj = order[lower(j)]
+		kk = order[lower(k)]
+		ll = order[lower(l)]
+
+		if ii > jj:
+			ij = j + i
+			sign = -1*sign
+		else :
+			ij = i + j
+		if kk > ll :
+			kl = l + k
+			sign = -1*sign
+		else :
+			kl = k + l
+
+		integral = ij + "||" + kl
+		print integral
+	return integral, sign, exchange	
+
+def applyDeltas (vector) :
+
+	#listName = sys.argv[1]
+	#listFile = open (listName, "r")
+	#listLines = listFile.readlines()
+
+	#outputName = listName + ".out"
+	#outputFile = open (outputName, "w")
+
+	includeExchange = False
+	auxVector = list()
+
+	#setIndex("pq","rs")
+
+	for i in range(0,len(vector)) :
+		line1 = vector[i]
+		sign1 = line1.sign
+		if "||" in line1.scalar :
+			integral = line1.scalar[:2] + line1.scalar[4:]
+			includeExchange = True
+		else :
+			integral = line1.scalar[:2] + line1.scalar[3:]
+		auxLine1 = line1.chain # Split the deltas
+	#	print auxLine1
+		auxIntegral = integral
+
+		addDelta = list()
+		for j in auxLine1 :	
+			if "delta" in j :
+				if ( indexDelta(j)[1] in auxIntegral or indexDelta(j)[0] in auxIntegral ) : 
+					auxIntegral = auxIntegral.replace( indexDelta(j)[1], indexDelta(j)[0] )
+				else :
+					addDelta.append ("\delta_{"+indexDelta(j)+"}")
+			else: 
+				addDelta.append (j)
+				#addDelta = addDelta + j
+		print sign1, auxIntegral,addDelta
+
+		auxIntegral, sign1, exchange = setIndex(auxIntegral,sign1,includeExchange)
+		print sign1, auxIntegral
+
+		auxVector.append (operatorchain (sign1, addDelta, auxIntegral) )
+
+	return 	auxVector	
+

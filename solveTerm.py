@@ -6,6 +6,7 @@ import wick
 import sumTerms
 import removeSinglesExcitations
 from wick import operatorchain
+import applydeltas
 
 global occupiedIndexesAlpha
 global virtualIndexesAlpha
@@ -128,7 +129,7 @@ def solveTerm (nmax,V0):
 	V3 = subOperators (V3sign,V3string, "" )
 	V4 = subOperators (V4sign,V4string, "" )
 
-	# 	
+	# Apply reference Hamiltonian operator
 	if V0.string[nmax] == "\hat{H}": 
 		if "{H}" in V1.string[nmax*2] :
 			V1.scalar = ["E"]
@@ -145,40 +146,87 @@ def solveTerm (nmax,V0):
 			V4.scalar = ["E"]
 			del V4.string[0]
 
+	# Express perturbation operator
 	if V0.string[nmax] == "\hat{V}": 
-		print "V yina"	
+
+		integralA = "pq||rs"
+		integralB = "pq||rq"
+
 		if "{V}" in V1.string[nmax*2] :
-			V12 = copy.copy(V1)
+			V12 = copy.deepcopy(V1)
 
 			V1.sign = float(V1.sign*(1.0/4.0))
-			V1.scalar = ["pQ|rS"]
-			V1.string = V1.string [:] + ["a_{p}^{\dagger}", "a_{Q}^{\dagger}","a_{S}","a_{r}"]
-			del V1.string[nmax*2] #{V}
-			print V1.string
+			#V1.sign = float(V1.sign*(1.0))
+			V1.scalar = [integralA]
+			V1.string = V1.string [:] + ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
 
-			V12.scalar = ["pQ|rQ"]
+			del V1.string[nmax*2] #{V}
+
+			V12.sign = float(V12.sign*(-1.0))
+			V12.scalar = [integralB]
 			V12.string = V12.string [:] + ["a_{p}^{\dagger}", "a_{r}"]
 			del V12.string[nmax*2] #{V}
-			print V12.string
 
 		if "{V}" in V2.string[nmax] :
-			V2.scalar = ["pq|rs"]
-			del V2.string[nmax]
-		if "{V}" in V3.string[nmax] :
-			V3.scalar = ["pq|rs"]
-			del V3.string[nmax]
-		if "{V}" in V4.string[0] :
-			V4.scalar = ["pq|rs"]
-			del V4.string[0]
+			V22 = copy.deepcopy(V2)
 
+			V2.sign = float(V2.sign*(1.0/4.0))
+			#V2.sign = float(V2.sign*(1.0))
+			V2.scalar = [integralA]
+			V2.string = V2.string[:nmax] + ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"] + \
+					V2.string[nmax+1:] #avoid V
+
+			V22.sign = float(V22.sign*(-1.0))
+			V22.scalar = [integralB]
+			V22.string = V22.string [:nmax] + ["a_{p}^{\dagger}", "a_{r}"] + \
+					V22.string[nmax+1:] #avoid V
+
+		if "{V}" in V3.string[nmax] :
+			V32 = copy.deepcopy(V3)
+
+			V3.sign = float(V3.sign*(1.0/4.0))
+			#V3.sign = float(V3.sign*(1.0))
+			V3.scalar = [integralA]
+			V3.string = V3.string[:nmax] + ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"] + \
+					V3.string[nmax+1:] #avoid V
+			V32.sign = float(V32.sign*(-1.0))
+			V32.scalar = [integralB]
+			V32.string = V32.string [:nmax] + ["a_{p}^{\dagger}", "a_{r}"] + \
+					V32.string[nmax+1:] #avoid V
+
+		if "{V}" in V4.string[0] :
+			V42 = copy.deepcopy(V4)
+
+			V4.sign = float(V4.sign*(1.0/4.0))
+			#V4.sign = float(V4.sign*(1.0))
+			V4.scalar = [integralA]
+
+			del V4.string[0] #{V}
+			V4.string = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"] + V4.string[:]
+
+			V42.sign = float(V42.sign*(-1.0))
+			V42.scalar = [integralB]
+			del V42.string[0] #{V}
+			V42.string = ["a_{p}^{\dagger}", "a_{r}"] + V42.string[:]
 
 	print "v1",V1.sign, V1.scalar, V1.string
 	print "v2",V2.sign, V2.scalar, V2.string
 	print "v3",V3.sign, V3.scalar, V3.string
 	print "v4",V4.sign, V4.scalar, V4.string
 
+	print "v21",V12.sign, V12.scalar, V12.string
+	print "v22",V22.sign, V22.scalar, V22.string
+	print "v32",V32.sign, V32.scalar, V32.string
+	print "v42",V42.sign, V42.scalar, V42.string
+
 	#reunite all four terms
-	allV = [V1,V2,V3,V4]
+	if V0.string[nmax] == "\hat{H}": 
+		allV = [V1,V2,V3,V4]
+	if V0.string[nmax] == "\hat{V}": 
+		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
+		#allV = [V1,V2,V3,V4]
+		#allV = [V1,V12]
+
 	newV = list()
 		
 	for Vi in allV :
@@ -197,7 +245,9 @@ def solveTerm (nmax,V0):
 			# number of terms (deltas)
 			for iterm in ncombinations:
 				# remove hamiltoniand matrix elements between ground state and single excitations determinants.
-				removeiterm = removeSinglesExcitations.removeSinglesExcitations(iterm)
+				#removeiterm = removeSinglesExcitations.removeSinglesExcitations(iterm)
+				removeiterm = False	
+				print iterm.sign,iterm.scalar,iterm.chain
 				if not removeiterm :
 				# Here we expand for each "scalar"
 				# Sum all terms in the propagator matrix element
@@ -211,9 +261,28 @@ def solveTerm (nmax,V0):
 
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
-	print "Result for term"
+
+	print "Result for term1"
 	for i in expandedTerms :
 		print i.sign, i.scalar, i.chain
+
+
+	if V0.string[nmax] == "\hat{V}": 
+		#print "call to apply deltas!"
+		expandedTerms = applydeltas.applyDeltas (expandedTerms)
+
+	print "Result for term2"
+	for i in expandedTerms :
+		print i.sign, i.scalar, i.chain
+
+	# Sum all terms in the propagator matrix element
+	expandedTerms = sumTerms.sumTerms(expandedTerms)
+
+	print "Result for term3"
+	for i in expandedTerms :
+		print i.sign, i.scalar, i.chain
+
+
 
 	return expandedTerms
 
