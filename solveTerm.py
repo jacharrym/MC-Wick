@@ -38,6 +38,9 @@ def getSignFromScalar ( sign, scalar ) :
 	if scalar[0] == "-" :
 		sign = -1	
 		auxscalar = scalar[1:]
+	elif scalar[0] == "+" :
+		sign = +1
+		auxscalar = scalar[1:]
 	else :
 		sign = +1
 		auxscalar = scalar
@@ -45,21 +48,21 @@ def getSignFromScalar ( sign, scalar ) :
 	return sign, auxscalar
 
 def commutator ( A, B ) :
-	AB = subOperators (+1, A + B, "")
-	BA = subOperators (-1, B + A, "")
+	AB = subOperators (+1.0, A + B, "")
+	BA = subOperators (-1.0, B + A, "")
 	ABBA = [AB,BA]
 	return ABBA
 
 def anticommutator ( A, B ) :
-	AB = subOperators (+1, A + B, "") ## list(A) + list(B)
-	BA = subOperators (+1, B + A, "")
+	AB = subOperators (+1.0, A + B, "") ## list(A) + list(B)
+	BA = subOperators (+1.0, B + A, "")
 	ABBA = [AB,BA]
 	return ABBA
 
 def superOperator ( H, v ) :
 	## \hat{H} v = [v,H]_- = vH - Hv
-	vH = subOperators (+1, v + H, "")
-	Hv = subOperators (-1, H + v, "")
+	vH = subOperators (+1.0, v + H, "")
+	Hv = subOperators (-1.0, H + v, "")
 	vHHv = [vH,Hv]
 	return vHHv
 
@@ -150,7 +153,9 @@ def solveTerm (nmax,V0):
 	if V0.string[nmax] == "\hat{V}": 
 
 		integralA = "pq||rs"
-		integralB = "pq||rq"
+		integralB = "po||ro"
+		auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
+		auxV12 = ["a_{p}^{\dagger}", "a_{r}"]
 
 		if "{V}" in V1.string[nmax*2] :
 			V12 = copy.deepcopy(V1)
@@ -158,13 +163,12 @@ def solveTerm (nmax,V0):
 			V1.sign = float(V1.sign*(1.0/4.0))
 			#V1.sign = float(V1.sign*(1.0))
 			V1.scalar = [integralA]
-			V1.string = V1.string [:] + ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
-
+			V1.string = V1.string [:] + auxV11
 			del V1.string[nmax*2] #{V}
 
 			V12.sign = float(V12.sign*(-1.0))
 			V12.scalar = [integralB]
-			V12.string = V12.string [:] + ["a_{p}^{\dagger}", "a_{r}"]
+			V12.string = V12.string [:] + auxV12
 			del V12.string[nmax*2] #{V}
 
 		if "{V}" in V2.string[nmax] :
@@ -173,12 +177,12 @@ def solveTerm (nmax,V0):
 			V2.sign = float(V2.sign*(1.0/4.0))
 			#V2.sign = float(V2.sign*(1.0))
 			V2.scalar = [integralA]
-			V2.string = V2.string[:nmax] + ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"] + \
+			V2.string = V2.string[:nmax] + auxV11 + \
 					V2.string[nmax+1:] #avoid V
 
 			V22.sign = float(V22.sign*(-1.0))
 			V22.scalar = [integralB]
-			V22.string = V22.string [:nmax] + ["a_{p}^{\dagger}", "a_{r}"] + \
+			V22.string = V22.string [:nmax] + auxV12 + \
 					V22.string[nmax+1:] #avoid V
 
 		if "{V}" in V3.string[nmax] :
@@ -187,11 +191,11 @@ def solveTerm (nmax,V0):
 			V3.sign = float(V3.sign*(1.0/4.0))
 			#V3.sign = float(V3.sign*(1.0))
 			V3.scalar = [integralA]
-			V3.string = V3.string[:nmax] + ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"] + \
+			V3.string = V3.string[:nmax] + auxV11 + \
 					V3.string[nmax+1:] #avoid V
 			V32.sign = float(V32.sign*(-1.0))
 			V32.scalar = [integralB]
-			V32.string = V32.string [:nmax] + ["a_{p}^{\dagger}", "a_{r}"] + \
+			V32.string = V32.string [:nmax] + auxV12 + \
 					V32.string[nmax+1:] #avoid V
 
 		if "{V}" in V4.string[0] :
@@ -202,35 +206,44 @@ def solveTerm (nmax,V0):
 			V4.scalar = [integralA]
 
 			del V4.string[0] #{V}
-			V4.string = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"] + V4.string[:]
+			V4.string = auxV11 + V4.string[:]
 
 			V42.sign = float(V42.sign*(-1.0))
 			V42.scalar = [integralB]
 			del V42.string[0] #{V}
-			V42.string = ["a_{p}^{\dagger}", "a_{r}"] + V42.string[:]
+			V42.string = auxV12 + V42.string[:]
 
-	print "v1",V1.sign, V1.scalar, V1.string
-	print "v2",V2.sign, V2.scalar, V2.string
-	print "v3",V3.sign, V3.scalar, V3.string
-	print "v4",V4.sign, V4.scalar, V4.string
 
-	print "v21",V12.sign, V12.scalar, V12.string
-	print "v22",V22.sign, V22.scalar, V22.string
-	print "v32",V32.sign, V32.scalar, V32.string
-	print "v42",V42.sign, V42.scalar, V42.string
 
 	#reunite all four terms
 	if V0.string[nmax] == "\hat{H}": 
 		allV = [V1,V2,V3,V4]
+
+		print "v1",V1.sign, V1.scalar, V1.string
+		print "v2",V2.sign, V2.scalar, V2.string
+		print "v3",V3.sign, V3.scalar, V3.string
+		print "v4",V4.sign, V4.scalar, V4.string
+
 	if V0.string[nmax] == "\hat{V}": 
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
 		#allV = [V1,V2,V3,V4]
 		#allV = [V1,V12]
+		print "v1",V1.sign, V1.scalar, V1.string
+		print "v21",V12.sign, V12.scalar, V12.string
+		print "v2",V2.sign, V2.scalar, V2.string
+		print "v22",V22.sign, V22.scalar, V22.string
+		print "v3",V3.sign, V3.scalar, V3.string
+		print "v32",V32.sign, V32.scalar, V32.string
+		print "v4",V4.sign, V4.scalar, V4.string
+		print "v42",V42.sign, V42.scalar, V42.string
+		allV = [V1,V12]
 
 	newV = list()
 		
+	i = 0
 	for Vi in allV :
-
+		i = i + 1
+		print i
 		# Perform Wick's theorem
 		auxVi = wick.wick(Vi)
 		# save only the non zero terms	
@@ -245,9 +258,11 @@ def solveTerm (nmax,V0):
 			# number of terms (deltas)
 			for iterm in ncombinations:
 				# remove hamiltoniand matrix elements between ground state and single excitations determinants.
-				#removeiterm = removeSinglesExcitations.removeSinglesExcitations(iterm)
-				removeiterm = False	
-				print iterm.sign,iterm.scalar,iterm.chain
+
+				if V0.string[nmax] == "\hat{H}": 
+					removeiterm = removeSinglesExcitations.removeSinglesExcitations(iterm)
+				else :
+					removeiterm = False
 				if not removeiterm :
 				# Here we expand for each "scalar"
 				# Sum all terms in the propagator matrix element
@@ -260,6 +275,7 @@ def solveTerm (nmax,V0):
 
 
 	# Sum all terms in the propagator matrix element
+	#print "summing"
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
 	print "Result for term1"

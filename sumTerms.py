@@ -163,7 +163,7 @@ def sumTerms ( vectorOfCombinations ) :
 
 	#print "aux vector"
 	#for i in range(0,len(auxVectorOfCombinations)) :
-	#	print auxVectorOfCombinations[i].sign, auxVectorOfCombinations[i].chain
+	#	print auxVectorOfCombinations[i].sign, auxVectorOfCombinations[i].scalar, auxVectorOfCombinations[i].chain
 
 	if len(equalVector) > 0 or len(vanishVector) > 0  :
 		auxVectorOfCombinations = sumTerms ( auxVectorOfCombinations ) 

@@ -115,15 +115,13 @@ betaSpecies = ("H","P")
 #		print ""
 
 nmax = 1
-alphaSpecies = ("h","p")
-betaSpecies = ("h","p") 
-#alphaSpecies = ("h")
-#betaSpecies = ("H") 
+alphaSpecies = ("h")
+betaSpecies = ("p") 
 
 print "One Particle"
 
 for i in alphaSpecies: 
-	for j in alphaSpecies: 
+	for j in betaSpecies: 
 		nOccup = 0
 		nVirtual = 0
 		print j+"-"+i,
@@ -133,7 +131,7 @@ for i in alphaSpecies:
 
 		indexj = "a_{"+indexj+"}^{\dagger}"
 		indexi = "a_{"+indexi+"}"
-		superOperator = "\hat{H}"
+		#superOperator = "\hat{H}"
 		superOperator = "\hat{V}"
 		#solves ther ji-lk term 
 		V0 = subOperators (+1,[indexj,superOperator,indexi ], "" )

@@ -160,7 +160,7 @@ def evaluateContraction ( operator1, operator2 ) :
 
 		dagger1 = dagger(operator1)
 		dagger2 = dagger(operator2)
-
+		#print "dagger ", dagger1, dagger2
 		if dagger1 == dagger2 :
 			## \contraction{a_i}{a_j} = \contraction{a_i^{\dagger}}{a_j^{\dagger}} = 0
 			outputContraction = contraction (0,"")
@@ -170,7 +170,8 @@ def evaluateContraction ( operator1, operator2 ) :
 				outputContraction = contraction (1,"\delta_{"+index1+index2+"}")
 			## \contraction{a_i^{\dagger}}{a_j} = 0
 			elif dagger1 == 1 and dagger2 == 0 :
-				outputContraction = contraction (0,"")
+				#outputContraction = contraction (0,"")
+				outputContraction = contraction (1,"\delta_{"+index1+index2+"}")
 		return outputContraction
 
 ## Remove an operator from the vector
@@ -289,14 +290,15 @@ def wick (Vi) :
 
 
 	##print "== Initial"
-	print "\t",longformat(Vi.string)
+	print "\t",Vi.sign, longformat(Vi.string)
 
 	##print "== Fermi vacuum"
 	Vi.string = transformToFermiSpace ( Vi.string )
 	print "\t",longformat(Vi.string)
 
 	## Zero 
-	sign = Vi.sign
+	#sign = Vi.sign
+	sign = 1.0 # We will add the right sign later
 	scalar = Vi.scalar
 	NV, sign = normalOrder (Vi.string,sign)
 
@@ -314,17 +316,17 @@ def wick (Vi) :
 	matrixOfCombinations, auxint, auxint, outputVector, outputValue = generateCombinations ( \
 		matrixOfCombinations, totalCombinations, 0, Vi.string, operatorchain (1,"",""))
 
-	#print "wick"
-	#for i in range(0,len(matrixOfCombinations)):
-	#	for j in range(0, len(matrixOfCombinations[i])):
-	#		print i,j,matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
+	print "wick"
+	for i in range(0,len(matrixOfCombinations)):
+		for j in range(0, len(matrixOfCombinations[i])):
+			print i,j,matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
 
 
 	## Save the sign and "scalar"
 	for i in range(0, totalCombinations+1):
 		for j in range(0,len(matrixOfCombinations[i])):
-
 			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
+			#print "sign", matrixOfCombinations[i][j].sign 
 			matrixOfCombinations[i][j].scalar = scalar
 
 
@@ -377,7 +379,7 @@ def wick (Vi) :
 	#print "non zero wick"
 	#for i in range(0,len(auxMatrixOfCombinations)):
 	#	for j in range(0, len(auxMatrixOfCombinations[i])):
-	#		print i,j,auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	#		print auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 	# Sum terms	
 	repeated = True
@@ -400,12 +402,14 @@ def wick (Vi) :
 #V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}" ]  
 
 #V0 = subOperators (+1,["a_{a}","a_{b}", "a_{c}","a_{d}^{\dagger}", "a_{e}^{\dagger}","a_{f}^{\dagger}"], "" )
-
 #V0 = subOperators (+1,["a_{p}^{\dagger}", 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{a}', "a_{i}^{\dagger}"], "" )
-
 #V0 = subOperators (+1,['a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{i}', 'a_{a}^{\dagger}'], "" )
+#V0 = subOperators (+1,["a_{i}","a_{a}^{\dagger}"], "" )
 
-#V0 = subOperators (+1,["a_{a}^{\dagger}"], "" )
+#V0 = subOperators (+1,["a_{r}","a_{q}","a_{p}^{\dagger}","a_{r}^{\dagger}"], "" )
+#V0 = subOperators (+1,["a_{r}","a_{p}^{\dagger}","a_{q}","a_{r}^{\dagger}"], "" )
+#V0 = subOperators (+1,["a_{r}","a_{q}","a_{p}","a_{r}^{\dagger}"], "" )
+
 #V1 = subOperators (-1,[V0.string[1], V0.string[0], V0.string[3], V0.string[4], V0.string[2]], "" )
 #if "{H}" in V1.string[4] :
 #	V1.scalar = "E"
