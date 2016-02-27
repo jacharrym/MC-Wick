@@ -12,7 +12,6 @@ def lower(String):
 def index ( operator ) :
 
 	auxindex = operator.split("_")
-
 	#initial = auxindex.find("{")
 	#final = auxindex.find("}")
 
@@ -39,19 +38,22 @@ def index ( operator ) :
 	}
 
 	if "delta" in auxindex[0] :
+		auxauxindex = auxindex[1].split(",")
+		auxindex1 = auxauxindex[0].replace("{","")
+		auxindex2 = auxauxindex[1].replace("}","")
 
-		index1 = auxindex[1][1]
-		index2 = auxindex[1][2]
+		index1 = auxindex1[0]
+		index2 = auxindex2[0]
+
 		order1 = order[lower(index1)]
 		order2 = order[lower(index2)]
 
 		if order1 > order2:
-			output = index2+index1
+			output = auxindex2+auxindex1
 		else :
-			output = index1+index2
+			output = auxindex1+auxindex2
 
 	else :
-
 		output = auxindex[1][1]
 
 	return output

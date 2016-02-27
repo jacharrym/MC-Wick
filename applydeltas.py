@@ -37,13 +37,29 @@ def lower(String):
 	String = String.lower()
 	return String
 
-def indexDelta ( delta ) :
-	auxindex = delta.split("_")[1]
+## Return the subindex of the operator
+def index ( operator ) :
+	auxindex = operator.split("_")[1]
 	initial = auxindex.find("{")
 	final = auxindex.find("}")
+	return auxindex[initial+1:final]
 
-	index1 = auxindex[1]
-	index2 = auxindex[2]
+## Creation operator = 1
+## Annhiliation operator = 0
+def dagger ( operator ) :
+	if "^{\dagger}" in operator: 
+		return 1
+	else :
+		return 0
+
+def indexDelta ( delta ) :
+	auxindex = delta.split("_")[1]
+	twoindex = auxindex.split(",")
+	#initial = auxindex.find("{")
+	#final = auxindex.find("}")
+
+	index1 = twoindex[0][1]
+	index2 = twoindex[1][0]
 	order1 = order[lower(index1)]	
 	order2 = order[lower(index2)]	
 
@@ -51,7 +67,6 @@ def indexDelta ( delta ) :
 		output = index2+index1
 	else :
 		output = index1+index2
-
 	return output
 
 ## Return the sign "1" for "+" and "-1" for "-"
@@ -66,20 +81,33 @@ def symbolOfSign (sign) :
 		return "+"
 	elif sign == -1:
 		return "-"
-def setIndex ( integral, sign, exchange ) :
+def setIndex ( integral, vector, sign, exchange ) :
 
 	dummyIndex = ("p","q","r","s")	
 
+	auxindexvector = list()
+	auxvector = list()
+	for operator in vector:
+		auxindexvector.append( index(operator) )
+		auxvector.append( dagger(operator) )
+
 	shift = 0
 	i = 0
-	for index in dummyIndex:
-		if index in integral:
-			print integral
+
+	for indexi in dummyIndex:
+		if indexi in integral:
 			integral = integral.replace(dummyIndex[i],dummyIndex[i-shift])
-			print integral
+			auxindexvector = [operator.replace(dummyIndex[i], dummyIndex[i-shift]) for operator in auxindexvector]
+
 		else :
 			shift = shift + 1
 		i = i + 1
+
+	for m in range(0,len(auxvector)) :
+		if auxvector[m] == 1 :
+			vector[m] = "b_{"+auxindexvector[m]+"}^{\dagger}"
+		if auxvector[m] == 0 :
+			vector[m] = "b_{"+auxindexvector[m]+"}"
 
 	if exchange :
 		i = integral[0]
@@ -104,8 +132,7 @@ def setIndex ( integral, sign, exchange ) :
 			kl = k + l
 
 		integral = ij + "||" + kl
-		print integral
-	return integral, sign, exchange	
+	return integral, vector, sign, exchange	
 
 def applyDeltas (vector) :
 
@@ -120,6 +147,8 @@ def applyDeltas (vector) :
 	auxVector = list()
 
 	#setIndex("pq","rs")
+
+	print "apply"
 
 	for i in range(0,len(vector)) :
 		line1 = vector[i]
@@ -139,14 +168,14 @@ def applyDeltas (vector) :
 				if ( indexDelta(j)[1] in auxIntegral or indexDelta(j)[0] in auxIntegral ) : 
 					auxIntegral = auxIntegral.replace( indexDelta(j)[1], indexDelta(j)[0] )
 				else :
-					addDelta.append ("\delta_{"+indexDelta(j)+"}")
+					addDelta.append ("\delta_{"+indexDelta(j)[0]+","+indexDelta(j)[1]+"}")
 			else: 
 				addDelta.append (j)
 				#addDelta = addDelta + j
-		print sign1, auxIntegral,addDelta
+		print addDelta
 
-		auxIntegral, sign1, exchange = setIndex(auxIntegral,sign1,includeExchange)
-		print sign1, auxIntegral
+		auxIntegral, addDelta, sign1, exchange = setIndex(auxIntegral, addDelta, sign1,includeExchange)
+		#print sign1, auxIntegral
 
 		auxVector.append (operatorchain (sign1, addDelta, auxIntegral) )
 

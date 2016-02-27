@@ -227,6 +227,8 @@ def solveTerm (nmax,V0):
 	if V0.string[nmax] == "\hat{V}": 
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
 		#allV = [V1,V2,V3,V4]
+
+		#allV = [V1]
 		#allV = [V1,V12]
 		print "v1",V1.sign, V1.scalar, V1.string
 		print "v21",V12.sign, V12.scalar, V12.string
@@ -236,7 +238,6 @@ def solveTerm (nmax,V0):
 		print "v32",V32.sign, V32.scalar, V32.string
 		print "v4",V4.sign, V4.scalar, V4.string
 		print "v42",V42.sign, V42.scalar, V42.string
-		allV = [V1,V12]
 
 	newV = list()
 		
@@ -297,7 +298,7 @@ def solveTerm (nmax,V0):
 	print "Result for term3"
 	for i in expandedTerms :
 		print i.sign, i.scalar, i.chain
-
+	print "="
 
 
 	return expandedTerms

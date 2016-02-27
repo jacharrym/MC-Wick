@@ -116,7 +116,7 @@ betaSpecies = ("H","P")
 
 nmax = 1
 alphaSpecies = ("h")
-betaSpecies = ("p") 
+betaSpecies = ("h") 
 
 print "One Particle"
 
