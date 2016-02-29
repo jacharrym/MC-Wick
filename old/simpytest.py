@@ -6,8 +6,9 @@ from pprint import pprint
 
 p,q,s,r,i,j,a = symbols("p,q,s,r,i,j,a")
 
-result = wicks(F(i)*Fd(j)*Fd(p)*Fd(q)*F(s)*F(r)  )
-#1 b_{i}b_{j}^{\dagger}b_{p}^{\dagger}b_{q}^{\dagger}b_{s}b_{r}
+result = wicks(Fd(i)*Fd(p)*Fd(q)*F(s)*F(r)*F(j))
+#a_{i}^{\dagger}a_{p}^{\dagger}a_{q}^{\dagger}a_{s}a_{r}a_{j}
+#a_{i}^{\dagger}a_{j}a_{p}^{\dagger}a_{q}^{\dagger}a_{s}a_{r}
 
 mystring = str(result)
 
@@ -20,6 +21,6 @@ if printresult:
 	m = 0
 	for element in mystring:
 		m  = m +1
-		if not "AnnihilateFermion(i)" in element:
+		if not "AnnihilateFermion(j)" in element:
 			print element
 

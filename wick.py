@@ -95,7 +95,7 @@ def dagger ( operator ) :
 		return 0
 
 ## Return the chain of operators in its normal order
-def normalOrder ( vector, auxSign ) :
+def normalOrder ( vector, auxSign, fixIndex ) :
 	
 	## Build an initial auxiliary vector of 1 and 0
 	auxVector = list()
@@ -104,7 +104,7 @@ def normalOrder ( vector, auxSign ) :
 		auxVector.append(dagger(i))
 
 	## Search which elements are disordered
-	while not evaluateOrder(auxVector):
+	while not evaluateOrder(auxVector, True):
 		for j in range(0,len(auxVector)) :
 			if auxVector[j] == 0:
 				for k in range(j,len(auxVector)):
@@ -126,12 +126,112 @@ def normalOrder ( vector, auxSign ) :
 		if bosons == True :
 			auxSign = auxSign * 1
 
+	if fixIndex :
+		# establish the order Cre(occupied,virtual,dummy) annih(occupied,virtual,dummy)
+		creationVector = list()
+		annihilationVector = list()
+		# "allocate a list of lists, occupied, virtul, dummy
+		for i in range(0,3):	
+			creationVector.append(list())
+			annihilationVector.append(list())
+
+		# split the operator product
+		for operator in outputVector :
+			i = index(operator)
+			# creation
+			if dagger(operator) == 1 :
+
+				if i in occupiedIndexes :
+					ii = occupiedIndexes.index(i)
+					creationVector[0].append(ii)
+
+				if i in virtualIndexes :
+					ii = virtualIndexes.index(i)
+					creationVector[1].append(ii)
+
+				if i in dummyIndexes :
+					ii = dummyIndexes.index(i)
+					creationVector[2].append(ii)
+
+			if dagger(operator) == 0 :
+
+				if i in occupiedIndexes :
+					ii = occupiedIndexes.index(i)
+					annihilationVector[0].append(ii)
+
+				if i in virtualIndexes :
+					ii = virtualIndexes.index(i)
+					annihilationVector[1].append(ii)
+
+				if i in dummyIndexes :
+					ii = dummyIndexes.index(i)
+					annihilationVector[2].append(ii)
+
+		# swap the indexes
+		for i in range(0,3):
+
+			creationVector[i], auxSign = swapVector(creationVector[i],auxSign)
+			annihilationVector[i], auxSign = swapVector(annihilationVector[i], auxSign)
+		
+		# rebuild the output vector
+		outputVector = list()
+		for i in range(0,3):
+			for j in creationVector[i] :
+				if i == 0 :
+					outputVector.append("b_{"+occupiedIndexes[j]+"}^{\dagger}")
+				if i == 1 :
+					outputVector.append("b_{"+virtualIndexes[j]+"}^{\dagger}")
+				if i == 2 :
+					outputVector.append("b_{"+dummyIndexes[j]+"}^{\dagger}")
+
+		for i in range(0,3):
+			for j in annihilationVector[i] :
+				if i == 0 :
+					outputVector.append("b_{"+occupiedIndexes[j]+"}")
+				if i == 1 :
+					outputVector.append("b_{"+virtualIndexes[j]+"}")
+				if i == 2 :
+					outputVector.append("b_{"+dummyIndexes[j]+"}")
+
 	return outputVector, auxSign
 
-## Evaluate if the vector is sorted in reverse form
-def evaluateOrder ( vector ):
+def swapVector ( vector, auxSign ) :
+
+	auxVector = list()
+	outputVector = list(vector) #Copy the initial vector
+	for i in outputVector :
+		auxVector.append(i)
+
+	while not evaluateOrder (auxVector, False):
+		for j in range(0,len(auxVector)) :
+			jj = auxVector[j]
+			for k in range(j+1,len(auxVector)):
+				kk = auxVector[k]
+				if jj > kk :
+		
+					indexToSwap = (j,k)
+					break
 	
-	sortedVector = sorted(vector, reverse=True)
+		## Swap
+		outputVector[indexToSwap[0]], outputVector[indexToSwap[1]] = outputVector[indexToSwap[1]], outputVector[indexToSwap[0]] 			
+		## Build the new auxiliary vector
+		auxVector = list()
+		for i in outputVector :
+			auxVector.append(i)
+
+		if fermions == True :
+			auxSign = auxSign * -1
+		if bosons == True :
+			auxSign = auxSign * 1
+
+
+	return outputVector, auxSign
+
+
+## Evaluate if the vector is sorted in reverse form
+def evaluateOrder ( vector, reverseMode ):
+	
+	sortedVector = sorted(vector, reverse=reverseMode)
 
 	isSorted = True
 	for i in range(0, len(vector)) :
@@ -235,7 +335,6 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 			auxSign = 1
 
 			auxContraction = evaluateContraction ( vector[m], vector[n] )
-
 			removeOperator(outputV,m)
 			removeOperator(outputV,n-1)
 			
@@ -252,8 +351,8 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 					sign = -sign
 
 			auxSign = sign
-			outputV, auxSign = normalOrder(outputV,auxSign) ## Ordered, only it is used for the ncombination-1
-
+			fixIndex = False
+			outputV, auxSign = normalOrder(outputV,auxSign,fixIndex) ## Ordered, only it is used for the ncombination-1
 			if auxSign == 0:
 				value = operatorchain (0,["+0"],"")
 			else :
@@ -304,7 +403,7 @@ def wick (Vi) :
 
 
 	##print "== Initial"
-	print "\t",Vi.sign, longformat(Vi.string)
+	#print "\t",Vi.sign, longformat(Vi.string)
 
 	##print "== Fermi vacuum"
 	#Vi.string = transformToFermiSpace ( Vi.string )
@@ -314,7 +413,7 @@ def wick (Vi) :
 	#sign = Vi.sign
 	sign = 1.0 # We will add the right sign later
 	scalar = Vi.scalar
-	NV, sign = normalOrder (Vi.string,sign)
+	NV, sign = normalOrder (Vi.string,sign, True)
 
 	matrixOfCombinations = list()
 	totalCombinations = len(Vi.string)/2
@@ -365,7 +464,8 @@ def wick (Vi) :
 				if len(auxvector) > 0 :
 					auxvector = transformToFermiSpace ( auxvector )
 					auxsign = 1
-					auxvector, auxsign = normalOrder (auxvector,auxsign)
+					auxvector, auxsign = normalOrder (auxvector,auxsign,True)
+
 				matrixOfCombinations[i][j].chain = auxdelta + auxvector
 				matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * auxsign
 
@@ -432,6 +532,7 @@ def wick (Vi) :
 ################################################
 
 #V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}" ]  
+V0 = subOperators (+1,["a_{l}", "a_{p}^{\dagger}"],"")
 
 #V0 = subOperators (+1,["a_{a}","a_{b}", "a_{c}","a_{d}^{\dagger}", "a_{e}^{\dagger}","a_{f}^{\dagger}"], "" )
 #V0 = subOperators (+1,["a_{p}^{\dagger}", 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{a}', "a_{i}^{\dagger}"], "" )
@@ -448,6 +549,14 @@ def wick (Vi) :
 #	del V1.string[4]
 
 # call wick
-#wick (V0)
+wick (V0)
+
+# test normalorder
+#outputV = ['a_{p}^{\dagger}', 'a_{q}', 'a_{s}', 'a_{r}']
+#uxSign = 1
+
+#print auxSign,outputV
+#outputV, auxSign = normalOrder(outputV,auxSign) ## Ordered, only it is used for the ncombination-1
+#print auxSign,outputV
 
 

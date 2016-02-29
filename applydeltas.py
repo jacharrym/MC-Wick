@@ -169,15 +169,16 @@ def applyDeltas (vector) :
 					auxIntegral = auxIntegral.replace( indexDelta(j)[1], indexDelta(j)[0] )
 				else :
 					addDelta.append ("\delta_{"+indexDelta(j)[0]+","+indexDelta(j)[1]+"}")
+					sign1 = 0
 			else: 
 				addDelta.append (j)
 				#addDelta = addDelta + j
-		print addDelta
 
 		auxIntegral, addDelta, sign1, exchange = setIndex(auxIntegral, addDelta, sign1,includeExchange)
 		#print sign1, auxIntegral
 
-		auxVector.append (operatorchain (sign1, addDelta, auxIntegral) )
+		if not sign1 == 0 :
+			auxVector.append (operatorchain (sign1, addDelta, auxIntegral) )
 
 	return 	auxVector	
 

@@ -110,7 +110,8 @@ def solveTerm (nmax,V0):
 	AyZ = A + yZ
 
 	# expand the anticommutator and superoperator
-	V12 = anticommutator (Xw,AyZ)
+	#V12 = anticommutator (Xw,AyZ)
+	V12 = commutator (Xw,AyZ)
 	V34 = superOperator (A,yZ)
 
 	# get all chains of operators
