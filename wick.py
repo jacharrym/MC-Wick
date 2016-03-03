@@ -137,6 +137,7 @@ def normalOrder ( vector, auxSign, fixIndex ) :
 
 		# split the operator product
 		for operator in outputVector :
+			#print operator
 			i = index(operator)
 			# creation
 			if dagger(operator) == 1 :
@@ -267,25 +268,50 @@ def evaluateContraction ( operator1, operator2 ) :
 		else : 	
 			## \contraction{a_i}{a_j^{\dagger}} = \delta_{ij}
 			if dagger1 == 0 and dagger2 == 1 :
-				if ( index1 in virtualIndexes and index2 in virtualIndexes )  or \
-				( index1 in virtualIndexes and index2 in dummyIndexes ) or \
-				( index1 in dummyIndexes and index2 in virtualIndexes ) or \
-				( index1 in dummyIndexes and index2 in dummyIndexes ):
+				if ( index1 in virtualIndexes and index2 in virtualIndexes ) :
 
-					outputContraction = contraction (1,"\delta_{"+index1+","+index2+"a"+"}")
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}"])
+
+				elif ( index1 in virtualIndexes and index2 in dummyIndexes ) :
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}",\
+					"\delta_{"+index2+","+index2+"a"+"}"] )
+
+				elif ( index1 in dummyIndexes and index2 in virtualIndexes ) :
+
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}",\
+					"\delta_{"+index1+","+index1+"a"+"}"])
+
+				elif ( index1 in dummyIndexes and index2 in dummyIndexes ):
+
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}",\
+					"\delta_{"+index1+","+index1+"a"+"}", "\delta_{"+index2+","+index2+"a"+"}",])
+
 				else :
-					outputContraction = contraction (0,"")
+					outputContraction = contraction (0,[""])
 
 			## \contraction{a_i^{\dagger}}{a_j} = 0
 			elif dagger1 == 1 and dagger2 == 0 :
-				if ( index1 in occupiedIndexes and index2 in occupiedIndexes )  or \
-				( index1 in occupiedIndexes and index2 in dummyIndexes ) or \
-				( index1 in dummyIndexes and index2 in occupiedIndexes ) or \
-				( index1 in dummyIndexes and index2 in dummyIndexes ):
-					#outputContraction = contraction (0,"")
-					outputContraction = contraction (1,"\delta_{"+index1+","+index2+"i"+"}")
+				if ( index1 in occupiedIndexes and index2 in occupiedIndexes ) :
+
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}"])
+
+				elif ( index1 in occupiedIndexes and index2 in dummyIndexes ) :
+
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}",\
+					"\delta_{"+index2+","+index2+"i"+"}"] )
+
+				elif ( index1 in dummyIndexes and index2 in occupiedIndexes ) :
+
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}",\
+					"\delta_{"+index1+","+index1+"i"+"}"])
+
+				elif ( index1 in dummyIndexes and index2 in dummyIndexes ):
+
+					outputContraction = contraction (1,["\delta_{"+index1+","+index2+"}",\
+					"\delta_{"+index1+","+index1+"i"+"}", "\delta_{"+index2+","+index2+"i"+"}",])
+
 				else :
-					outputContraction = contraction (0,"")
+					outputContraction = contraction (0,[""])
 		return outputContraction
 
 ## Remove an operator from the vector
@@ -356,7 +382,7 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 			if auxSign == 0:
 				value = operatorchain (0,["+0"],"")
 			else :
-				value = operatorchain (auxSign,[auxContraction.string],"")
+				value = operatorchain (auxSign,auxContraction.string,"")
 
 			auxvalue = copy.deepcopy(value)
 
@@ -532,7 +558,7 @@ def wick (Vi) :
 ################################################
 
 #V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}" ]  
-V0 = subOperators (+1,["a_{l}", "a_{p}^{\dagger}"],"")
+#V0 = subOperators (+1,["a_{l}", "a_{p}^{\dagger}"],"")
 
 #V0 = subOperators (+1,["a_{a}","a_{b}", "a_{c}","a_{d}^{\dagger}", "a_{e}^{\dagger}","a_{f}^{\dagger}"], "" )
 #V0 = subOperators (+1,["a_{p}^{\dagger}", 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{a}', "a_{i}^{\dagger}"], "" )
@@ -549,7 +575,7 @@ V0 = subOperators (+1,["a_{l}", "a_{p}^{\dagger}"],"")
 #	del V1.string[4]
 
 # call wick
-wick (V0)
+#wick (V0)
 
 # test normalorder
 #outputV = ['a_{p}^{\dagger}', 'a_{q}', 'a_{s}', 'a_{r}']

@@ -53,21 +53,24 @@ def dagger ( operator ) :
 		return 0
 
 def indexDelta ( delta ) :
+
 	auxindex = delta.split("_")[1]
 	twoindex = auxindex.split(",")
 	#initial = auxindex.find("{")
 	#final = auxindex.find("}")
 
-	index1 = twoindex[0][1]
-	index2 = twoindex[1][0]
-	order1 = order[lower(index1)]	
-	order2 = order[lower(index2)]	
+	index1 = twoindex[0].replace("{","")
+	index2 = twoindex[1].replace("}","")
+	order1 = order[lower(index1[0][0])]	
+	order2 = order[lower(index2[0][0])]	
 
+	output = list()
 	if order1 > order2:
-		output = index2+index1
+		output = (index2,index1)
 	else :
-		output = index1+index2
+		output = (index1,index2)
 	return output
+
 
 ## Return the sign "1" for "+" and "-1" for "-"
 def valueOfSign (sign) :
@@ -82,7 +85,6 @@ def symbolOfSign (sign) :
 	elif sign == -1:
 		return "-"
 def setIndex ( integral, vector, sign, exchange ) :
-
 	dummyIndex = ("p","q","r","s")	
 
 	auxindexvector = list()
@@ -95,8 +97,14 @@ def setIndex ( integral, vector, sign, exchange ) :
 	i = 0
 
 	for indexi in dummyIndex:
-		if indexi in integral:
-			integral = integral.replace(dummyIndex[i],dummyIndex[i-shift])
+		#print indexi, integral
+		matching = [s for s in integral if indexi in s]
+		if matching :
+			#print integral
+	
+			for u in range(0,len(integral)) :
+				integral[u] = integral[u].replace(dummyIndex[i],dummyIndex[i-shift])
+			#print integral
 			auxindexvector = [operator.replace(dummyIndex[i], dummyIndex[i-shift]) for operator in auxindexvector]
 
 		else :
@@ -115,23 +123,23 @@ def setIndex ( integral, vector, sign, exchange ) :
 		k = integral[2]
 		l = integral[3]
 
-		ii = order[lower(i)]	
-		jj = order[lower(j)]
-		kk = order[lower(k)]
-		ll = order[lower(l)]
+		ii = order[lower(i)[0]]	
+		jj = order[lower(j)[0]]
+		kk = order[lower(k)[0]]
+		ll = order[lower(l)[0]]
 
 		if ii > jj:
-			ij = j + i
+			ij = [j,i]
 			sign = -1*sign
 		else :
-			ij = i + j
+			ij = [i,j]
 		if kk > ll :
-			kl = l + k
+			kl = [l,k]
 			sign = -1*sign
 		else :
-			kl = k + l
+			kl = [k,l]
 
-		integral = ij + "||" + kl
+		integral = ij + ["||"] + kl
 	return integral, vector, sign, exchange	
 
 def applyDeltas (vector) :
@@ -153,29 +161,40 @@ def applyDeltas (vector) :
 	for i in range(0,len(vector)) :
 		line1 = vector[i]
 		sign1 = line1.sign
+
 		if "||" in line1.scalar :
-			integral = line1.scalar[:2] + line1.scalar[4:]
+			integral = line1.scalar
+			integral = integral.split(",")
+			del integral[integral.index("||")]
 			includeExchange = True
 		else :
-			integral = line1.scalar[:2] + line1.scalar[3:]
+
+			integral = line1.scalar
+			integral = integral.split(",")
+			del integral[integral.index("|")]
 		auxLine1 = line1.chain # Split the deltas
-	#	print auxLine1
 		auxIntegral = integral
 
 		addDelta = list()
 		for j in auxLine1 :	
 			if "delta" in j :
-				if ( indexDelta(j)[1] in auxIntegral or indexDelta(j)[0] in auxIntegral ) : 
-					auxIntegral = auxIntegral.replace( indexDelta(j)[1], indexDelta(j)[0] )
+				if ( indexDelta(j)[0][0] in auxIntegral ) : 
+					for u in range(0,len(auxIntegral)) :		
+						auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[0][0], indexDelta(j)[1] ) 
+
+				elif ( indexDelta(j)[1][0] in auxIntegral ) : 
+					for u in range(0,len(auxIntegral)) :		
+						auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[1][0], indexDelta(j)[0] ) 
+
 				else :
-					addDelta.append ("\delta_{"+indexDelta(j)[0]+","+indexDelta(j)[1]+"}")
-					sign1 = 0
+					if not indexDelta(j)[0][0] == indexDelta(j)[1][0]:
+						addDelta.append ("\delta_{"+indexDelta(j)[0]+","+indexDelta(j)[1]+"}")
+						sign1 = 0
 			else: 
 				addDelta.append (j)
 				#addDelta = addDelta + j
 
 		auxIntegral, addDelta, sign1, exchange = setIndex(auxIntegral, addDelta, sign1,includeExchange)
-		#print sign1, auxIntegral
 
 		if not sign1 == 0 :
 			auxVector.append (operatorchain (sign1, addDelta, auxIntegral) )

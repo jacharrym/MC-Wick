@@ -13,9 +13,9 @@ global virtualIndexesAlpha
 global occupiedIndexesBeta
 global virtualIndexesBeta
 
-occupiedIndexesAlpha = ("i","j","k","l","m","n","o","p","q","r","s")
+occupiedIndexesAlpha = ("i","j","k","l","m","n","o")
 virtualIndexesAlpha  = ("a","b","c","d","e","f","g","h")
-occupiedIndexesBeta  = ("I","J","K","L","M","N","O","P","Q","R","S")
+occupiedIndexesBeta  = ("I","J","K","L","M","N","O")
 virtualIndexesBeta  = ("A","B","C","D","E","F","G","H")
 
 ## subOperators
@@ -70,7 +70,6 @@ def calculateEpsilon ( vector ) :
 
 	output = list()
 	for operator in vector :
-
 		indexi = index(operator)
 		if indexi.isupper() : # beta species
 			if indexi in occupiedIndexesBeta  : #
@@ -93,7 +92,7 @@ def solveTerm (nmax,V0):
 	#nmax = 2
 	#pQrS
 	#V0 = subOperators (+1,["a_{a}^{\dagger}", "a_{B}^{\dagger}","\hat{H}","a_{k}","a_{C}" ], "" )
-	print V0.string
+	print "V0",V0.string
 
 	# wX \hat{A} yZ element
 	# = [X^\dagger w^\dagger , \hat{A} y Z ]_+
@@ -108,6 +107,9 @@ def solveTerm (nmax,V0):
 	A = [V0.string[nmax]] #list of one element
 	yZ = V0.string[nmax+1:]
 	AyZ = A + yZ
+	nXw = len(Xw)
+	nAyZ = len(AyZ)
+	print nXw,nAyZ
 
 	# expand the anticommutator and superoperator
 	#V12 = anticommutator (Xw,AyZ)
@@ -115,11 +117,16 @@ def solveTerm (nmax,V0):
 	V34 = superOperator (A,yZ)
 
 	# get all chains of operators
-	V1string = V12[0].string[0:nmax] + V34[0].string
-	V2string = V12[0].string[0:nmax] + V34[1].string
+	V1string = V12[0].string[0:nXw] + V34[0].string#
+	V2string = V12[0].string[0:nXw] + V34[1].string#
 
-	V3string = V34[0].string + V12[1].string[nmax+1:]
-	V4string = V34[1].string + V12[1].string[nmax+1:] 
+	V3string = V34[0].string + V12[1].string[nAyZ:]
+	V4string = V34[1].string + V12[1].string[nAyZ:] 
+
+	print V1string
+	print V2string
+	print V3string
+	print V4string
 
 	# get all signs
 	V1sign = V12[0].sign * V34[0].sign
@@ -133,112 +140,177 @@ def solveTerm (nmax,V0):
 	V3 = subOperators (V3sign,V3string, "" )
 	V4 = subOperators (V4sign,V4string, "" )
 
-	# Apply reference Hamiltonian operator
-	if V0.string[nmax] == "\hat{H}": 
-		if "{H}" in V1.string[nmax*2] :
-			V1.scalar = ["E"]
-			del V1.string[nmax*2]
-		if "{H}" in V2.string[nmax] :
-			V2.scalar = ["E"]
-			V2.scalar = V2.scalar + calculateEpsilon(V2.string[nmax+1:])
-			del V2.string[nmax]
-		if "{H}" in V3.string[nmax] :
-			V3.scalar = ["E"]
-			V3.scalar = V3.scalar + calculateEpsilon(V3.string[:nmax])
-			del V3.string[nmax]
-		if "{H}" in V4.string[0] :
-			V4.scalar = ["E"]
-			del V4.string[0]
-
-	# Express perturbation operator
-	if V0.string[nmax] == "\hat{V}": 
-
-		integralA = "pq||rs"
-		integralB = "po||ro"
-		auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
-		auxV12 = ["a_{p}^{\dagger}", "a_{r}"]
-
-		if "{V}" in V1.string[nmax*2] :
-			V12 = copy.deepcopy(V1)
-
-			V1.sign = float(V1.sign*(1.0/4.0))
-			#V1.sign = float(V1.sign*(1.0))
-			V1.scalar = [integralA]
-			V1.string = V1.string [:] + auxV11
-			del V1.string[nmax*2] #{V}
-
-			V12.sign = float(V12.sign*(-1.0))
-			V12.scalar = [integralB]
-			V12.string = V12.string [:] + auxV12
-			del V12.string[nmax*2] #{V}
-
-		if "{V}" in V2.string[nmax] :
-			V22 = copy.deepcopy(V2)
-
-			V2.sign = float(V2.sign*(1.0/4.0))
-			#V2.sign = float(V2.sign*(1.0))
-			V2.scalar = [integralA]
-			V2.string = V2.string[:nmax] + auxV11 + \
-					V2.string[nmax+1:] #avoid V
-
-			V22.sign = float(V22.sign*(-1.0))
-			V22.scalar = [integralB]
-			V22.string = V22.string [:nmax] + auxV12 + \
-					V22.string[nmax+1:] #avoid V
-
-		if "{V}" in V3.string[nmax] :
-			V32 = copy.deepcopy(V3)
-
-			V3.sign = float(V3.sign*(1.0/4.0))
-			#V3.sign = float(V3.sign*(1.0))
-			V3.scalar = [integralA]
-			V3.string = V3.string[:nmax] + auxV11 + \
-					V3.string[nmax+1:] #avoid V
-			V32.sign = float(V32.sign*(-1.0))
-			V32.scalar = [integralB]
-			V32.string = V32.string [:nmax] + auxV12 + \
-					V32.string[nmax+1:] #avoid V
-
-		if "{V}" in V4.string[0] :
-			V42 = copy.deepcopy(V4)
-
-			V4.sign = float(V4.sign*(1.0/4.0))
-			#V4.sign = float(V4.sign*(1.0))
-			V4.scalar = [integralA]
-
-			del V4.string[0] #{V}
-			V4.string = auxV11 + V4.string[:]
-
-			V42.sign = float(V42.sign*(-1.0))
-			V42.scalar = [integralB]
-			del V42.string[0] #{V}
-			V42.string = auxV12 + V42.string[:]
-
-
 
 	#reunite all four terms
 	if V0.string[nmax] == "\hat{H}": 
 		allV = [V1,V2,V3,V4]
 
-		print "v1",V1.sign, V1.scalar, V1.string
-		print "v2",V2.sign, V2.scalar, V2.string
-		print "v3",V3.sign, V3.scalar, V3.string
-		print "v4",V4.sign, V4.scalar, V4.string
+
+
+	# Apply reference Hamiltonian operator
+	if V0.string[nmax] == "\hat{H}": 
+		for i in range(0,len(allV)) :
+			
+			operatorPosition = allV[i].string.index("\hat{H}")
+			if operatorPosition == 0 or operatorPosition == (len(allV[i].string)-1) :
+				allV[i].scalar = ["E"]
+				del allV[i].string[operatorPosition]
+			elif operatorPosition == nXw:
+				allV[i].scalar = ["E"]
+				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[nXw+1:])
+				del allV[i].string[nXw]
+			elif operatorPosition == (nAyZ-1):
+				allV[i].scalar = ["E"]
+				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[:nAyZ-1])
+				del allV[i].string[nAyZ-1]
+
+			print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
+
+	if V0.string[nmax] == "\hat{V}": 
+		#allV = [V1,V12,V2,V22,V3,V32,V4,V42]
+		allV = [V1,V2,V3,V4]
+
+	# Express perturbation operator
+	if V0.string[nmax] == "\hat{V}": 
+
+		integralA = "p,q,||,r,s"
+		integralB = "p,qi,||,r,qi"
+		auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
+		auxV12 = ["a_{p}^{\dagger}", "a_{r}"]
+
+		for i in range(0,len(allV)) :
+
+			operatorPosition = allV[i].string.index("\hat{V}")
+
+			if operatorPosition == (len(allV[i].string)-1) :
+				V12 = copy.deepcopy(allV[i])
+
+				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				#V1.sign = float(V1.sign*(1.0))
+				allV[i].scalar = [integralA]
+				allV[i].string = allV[i].string [:] + auxV11
+				del allV[i].string[operatorPosition]
+
+				V12.sign = float(V12.sign*(-1.0))
+				V12.scalar = [integralB]
+				V12.string = V12.string [:] + auxV12
+				del V12.string[operatorPosition] #{V}
+				print "V12", V12.string
+
+			elif operatorPosition == nXw and i == 1:
+
+				V22 = copy.deepcopy(allV[i])
+
+				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				#V2.sign = float(V2.sign*(1.0))
+				allV[i].scalar = [integralA]
+				allV[i].string = allV[i].string[:nAyZ-1] + auxV11 + \
+						V2.string[nXw+1:] #avoid V
+
+				V22.sign = float(V22.sign*(-1.0))
+				V22.scalar = [integralB]
+				V22.string = V22.string[:nAyZ-1] + auxV12 + \
+						V22.string[nXw+1:] #avoid V
+
+				print "V22", V22.string
+
+			elif operatorPosition == (nAyZ-1) and i == 2:
+
+				V32 = copy.deepcopy(allV[i])
+
+				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				#V3.sign = float(V3.sign*(1.0))
+				allV[i].scalar = [integralA]
+				allV[i].string = allV[i].string[:nAyZ-1] + auxV11 + \
+						allV[i].string[nXw+1:] #avoid V
+				V32.sign = float(V32.sign*(-1.0))
+				V32.scalar = [integralB]
+				V32.string = V32.string [:nAyZ-1] + auxV12 + \
+						V32.string[nXw+1:] #avoid V
+
+				print "V32", V32.string
+
+			elif operatorPosition == 0 :
+
+				V42 = copy.deepcopy(allV[i])
+
+				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				#V4.sign = float(V4.sign*(1.0))
+				allV[i].scalar = [integralA]
+
+				del allV[i].string[0] #{V}
+				allV[i].string = auxV11 + allV[i].string[:]
+
+				V42.sign = float(V42.sign*(-1.0))
+				V42.scalar = [integralB]
+				del V42.string[0] #{V}
+				V42.string = auxV12 + V42.string[:]
+
+				print "V42", V42.string
+
+			print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
+
+
+		#if "{V}" in V1.string[nmax*2] :
+		#	V12 = copy.deepcopy(V1)
+
+		#	V1.sign = float(V1.sign*(1.0/4.0))
+		#	#V1.sign = float(V1.sign*(1.0))
+		#	V1.scalar = [integralA]
+		#	V1.string = V1.string [:] + auxV11
+		#	del V1.string[nmax*2] #{V}
+
+		#	V12.sign = float(V12.sign*(-1.0))
+		#	V12.scalar = [integralB]
+		#	V12.string = V12.string [:] + auxV12
+		#	del V12.string[nmax*2] #{V}
+
+		#if "{V}" in V2.string[nmax] :
+		#	V22 = copy.deepcopy(V2)
+
+		#	V2.sign = float(V2.sign*(1.0/4.0))
+		#	#V2.sign = float(V2.sign*(1.0))
+		#	V2.scalar = [integralA]
+		#	V2.string = V2.string[:nmax] + auxV11 + \
+		#			V2.string[nmax+1:] #avoid V
+
+		#	V22.sign = float(V22.sign*(-1.0))
+		#	V22.scalar = [integralB]
+		#	V22.string = V22.string [:nmax] + auxV12 + \
+		#			V22.string[nmax+1:] #avoid V
+
+		#if "{V}" in V3.string[nmax] :
+		#	V32 = copy.deepcopy(V3)
+
+		#	V3.sign = float(V3.sign*(1.0/4.0))
+		#	#V3.sign = float(V3.sign*(1.0))
+		#	V3.scalar = [integralA]
+		#	V3.string = V3.string[:nmax] + auxV11 + \
+		#			V3.string[nmax+1:] #avoid V
+		#	V32.sign = float(V32.sign*(-1.0))
+		#	V32.scalar = [integralB]
+		#	V32.string = V32.string [:nmax] + auxV12 + \
+		#			V32.string[nmax+1:] #avoid V
+
+		#if "{V}" in V4.string[0] :
+		#	V42 = copy.deepcopy(V4)
+
+		#	V4.sign = float(V4.sign*(1.0/4.0))
+		#	#V4.sign = float(V4.sign*(1.0))
+		#	V4.scalar = [integralA]
+
+		#	del V4.string[0] #{V}
+		#	V4.string = auxV11 + V4.string[:]
+
+		#	V42.sign = float(V42.sign*(-1.0))
+		#	V42.scalar = [integralB]
+		#	del V42.string[0] #{V}
+		#	V42.string = auxV12 + V42.string[:]
 
 	if V0.string[nmax] == "\hat{V}": 
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
-		#allV = [V1,V2,V3,V4]
-
-		#allV = [V1]
-		#allV = [V1,V12]
-		print "v1",V1.sign, V1.scalar, V1.string
-		print "v21",V12.sign, V12.scalar, V12.string
-		print "v2",V2.sign, V2.scalar, V2.string
-		print "v22",V22.sign, V22.scalar, V22.string
-		print "v3",V3.sign, V3.scalar, V3.string
-		print "v32",V32.sign, V32.scalar, V32.string
-		print "v4",V4.sign, V4.scalar, V4.string
-		print "v42",V42.sign, V42.scalar, V42.string
+		for i in range(0,len(allV)) :
+			print allV[i].string
 
 	newV = list()
 		
