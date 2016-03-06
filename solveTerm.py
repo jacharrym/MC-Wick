@@ -113,7 +113,7 @@ def solveTerm (nmax,V0):
 
 	# expand the anticommutator and superoperator
 	#V12 = anticommutator (Xw,AyZ)
-	V12 = commutator (Xw,AyZ)
+	V12 = anticommutator (Xw,AyZ)
 	V34 = superOperator (A,yZ)
 
 	# get all chains of operators
@@ -167,8 +167,7 @@ def solveTerm (nmax,V0):
 			print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
 	if V0.string[nmax] == "\hat{V}": 
-		#allV = [V1,V12,V2,V22,V3,V32,V4,V42]
-		allV = [V1,V2,V3,V4]
+		allV = [V1,V2,V3,V4] #we begin from these four
 
 	# Express perturbation operator
 	if V0.string[nmax] == "\hat{V}": 
@@ -195,7 +194,6 @@ def solveTerm (nmax,V0):
 				V12.scalar = [integralB]
 				V12.string = V12.string [:] + auxV12
 				del V12.string[operatorPosition] #{V}
-				print "V12", V12.string
 
 			elif operatorPosition == nXw and i == 1:
 
@@ -204,31 +202,29 @@ def solveTerm (nmax,V0):
 				allV[i].sign = float(allV[i].sign*(1.0/4.0))
 				#V2.sign = float(V2.sign*(1.0))
 				allV[i].scalar = [integralA]
-				allV[i].string = allV[i].string[:nAyZ-1] + auxV11 + \
+				allV[i].string = allV[i].string[:nXw] + auxV11 + \
 						V2.string[nXw+1:] #avoid V
 
 				V22.sign = float(V22.sign*(-1.0))
 				V22.scalar = [integralB]
-				V22.string = V22.string[:nAyZ-1] + auxV12 + \
+				V22.string = V22.string[:nXw] + auxV12 + \
 						V22.string[nXw+1:] #avoid V
 
-				print "V22", V22.string
 
 			elif operatorPosition == (nAyZ-1) and i == 2:
 
 				V32 = copy.deepcopy(allV[i])
-
 				allV[i].sign = float(allV[i].sign*(1.0/4.0))
 				#V3.sign = float(V3.sign*(1.0))
 				allV[i].scalar = [integralA]
 				allV[i].string = allV[i].string[:nAyZ-1] + auxV11 + \
-						allV[i].string[nXw+1:] #avoid V
+						allV[i].string[nAyZ:] #avoid V
+
 				V32.sign = float(V32.sign*(-1.0))
 				V32.scalar = [integralB]
 				V32.string = V32.string [:nAyZ-1] + auxV12 + \
-						V32.string[nXw+1:] #avoid V
+						V32.string[nAyZ:] #avoid V
 
-				print "V32", V32.string
 
 			elif operatorPosition == 0 :
 
@@ -246,72 +242,13 @@ def solveTerm (nmax,V0):
 				del V42.string[0] #{V}
 				V42.string = auxV12 + V42.string[:]
 
-				print "V42", V42.string
 
-			print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
-
-
-		#if "{V}" in V1.string[nmax*2] :
-		#	V12 = copy.deepcopy(V1)
-
-		#	V1.sign = float(V1.sign*(1.0/4.0))
-		#	#V1.sign = float(V1.sign*(1.0))
-		#	V1.scalar = [integralA]
-		#	V1.string = V1.string [:] + auxV11
-		#	del V1.string[nmax*2] #{V}
-
-		#	V12.sign = float(V12.sign*(-1.0))
-		#	V12.scalar = [integralB]
-		#	V12.string = V12.string [:] + auxV12
-		#	del V12.string[nmax*2] #{V}
-
-		#if "{V}" in V2.string[nmax] :
-		#	V22 = copy.deepcopy(V2)
-
-		#	V2.sign = float(V2.sign*(1.0/4.0))
-		#	#V2.sign = float(V2.sign*(1.0))
-		#	V2.scalar = [integralA]
-		#	V2.string = V2.string[:nmax] + auxV11 + \
-		#			V2.string[nmax+1:] #avoid V
-
-		#	V22.sign = float(V22.sign*(-1.0))
-		#	V22.scalar = [integralB]
-		#	V22.string = V22.string [:nmax] + auxV12 + \
-		#			V22.string[nmax+1:] #avoid V
-
-		#if "{V}" in V3.string[nmax] :
-		#	V32 = copy.deepcopy(V3)
-
-		#	V3.sign = float(V3.sign*(1.0/4.0))
-		#	#V3.sign = float(V3.sign*(1.0))
-		#	V3.scalar = [integralA]
-		#	V3.string = V3.string[:nmax] + auxV11 + \
-		#			V3.string[nmax+1:] #avoid V
-		#	V32.sign = float(V32.sign*(-1.0))
-		#	V32.scalar = [integralB]
-		#	V32.string = V32.string [:nmax] + auxV12 + \
-		#			V32.string[nmax+1:] #avoid V
-
-		#if "{V}" in V4.string[0] :
-		#	V42 = copy.deepcopy(V4)
-
-		#	V4.sign = float(V4.sign*(1.0/4.0))
-		#	#V4.sign = float(V4.sign*(1.0))
-		#	V4.scalar = [integralA]
-
-		#	del V4.string[0] #{V}
-		#	V4.string = auxV11 + V4.string[:]
-
-		#	V42.sign = float(V42.sign*(-1.0))
-		#	V42.scalar = [integralB]
-		#	del V42.string[0] #{V}
-		#	V42.string = auxV12 + V42.string[:]
+			#print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
 	if V0.string[nmax] == "\hat{V}": 
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
 		for i in range(0,len(allV)) :
-			print allV[i].string
-
+			print i+1,allV[i].string
 	newV = list()
 		
 	i = 0

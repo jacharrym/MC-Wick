@@ -544,7 +544,7 @@ def wick (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	print "Sum terms"
+	print "Wick, Sum terms"
 	for i in range(0,len(auxMatrixOfCombinations)):
 		for j in range(0, len(auxMatrixOfCombinations[i])):
 			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
@@ -569,13 +569,26 @@ def wick (Vi) :
 #V0 = subOperators (+1,["a_{r}","a_{p}^{\dagger}","a_{q}","a_{r}^{\dagger}"], "" )
 #V0 = subOperators (+1,["a_{r}","a_{q}","a_{p}","a_{r}^{\dagger}"], "" )
 
+#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{p}^{\\dagger}', 'a_{q}'],"")
+# oo
+#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{m}^{\\dagger}', 'a_{n}'],"")
+## ov
+#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{m}^{\\dagger}', 'a_{b}'],"")
+## vo
+#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{b}^{\\dagger}', 'a_{m}'],"")
+## vv
+#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{b}^{\\dagger}', 'a_{c}'],"")
+#
+#wick (V0)
+V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
+wick (V0)
+
 #V1 = subOperators (-1,[V0.string[1], V0.string[0], V0.string[3], V0.string[4], V0.string[2]], "" )
 #if "{H}" in V1.string[4] :
 #	V1.scalar = "E"
 #	del V1.string[4]
 
 # call wick
-#wick (V0)
 
 # test normalorder
 #outputV = ['a_{p}^{\dagger}', 'a_{q}', 'a_{s}', 'a_{r}']

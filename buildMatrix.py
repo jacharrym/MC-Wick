@@ -53,18 +53,53 @@ def checkNumberOfParticles ( vector ) :
 				
 
 
-#selectedMatrix = "test"
+selectedMatrix = "test"
 #selectedMatrix = "xxHxx"
 #selectedMatrix = "xyHxy"
-selectedMatrix = "xHx"
+#selectedMatrix = "xHx"
 twoParticles = False
 oneParticle = False
 test= True
 
-#nmax = 2
-#alphaSpecies = ("h","p")
-#betaSpecies = ("h","p") 
-#
+nmax = 1
+alphaSpecies = ("h","p")
+betaSpecies = ("h","p") 
+
+for i in betaSpecies: 
+	for j in alphaSpecies: 
+		for k in betaSpecies: 
+			for l in alphaSpecies: 
+				if abs(checkNumberOfParticles( [i,l,k] ))==1 and \
+				abs(checkNumberOfParticles( [j] ))==1 :
+					nOccup = 0
+					nVirtual = 0
+					indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
+					indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+					indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
+					indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
+					print indexj, "-", indexi, indexl, indexk
+
+
+					indexj = "a_{"+indexj+"}^{\dagger}"
+					indexi = "a_{"+indexi+"}"
+					indexl = "a_{"+indexl+"}^{\dagger}"
+					indexk = "a_{"+indexk+"}"
+					superOperator = "\hat{H}"
+
+
+					print indexj, "-", indexi, indexl, indexk
+					#solves ther ji-lk term 
+					superOperator = "\hat{V}"
+					#superOperator = "\hat{H}"
+					#solves ther ji-lk term 
+					V0 = subOperators (+1,[indexj,superOperator,\
+						indexi,indexl,indexk ], "" )
+					finalTerms = solveTerm.solveTerm (nmax,V0)
+
+					stop
+
+
+# two electrons
 #for i in betaSpecies: 
 #	for j in alphaSpecies: 
 #		for k in betaSpecies: 
@@ -95,8 +130,8 @@ test= True
 #							superOperator = "\hat{H}"
 #
 #							#solves ther ji-lk term 
-#							#superOperator = "\hat{V}"
-#							superOperator = "\hat{H}"
+#							superOperator = "\hat{V}"
+#							#superOperator = "\hat{H}"
 #							#solves ther ji-lk term 
 #							V0 = subOperators (+1,[indexj,indexi,superOperator,\
 #								indexl,indexk,indexm,indexn ], "" )
