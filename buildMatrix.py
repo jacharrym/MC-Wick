@@ -53,90 +53,79 @@ def checkNumberOfParticles ( vector ) :
 				
 
 
-selectedMatrix = "test"
+selectedMatrix = "xHx"
+#selectedMatrix = "xHxyz"
 #selectedMatrix = "xxHxx"
 #selectedMatrix = "xyHxy"
-#selectedMatrix = "xHx"
+
 twoParticles = False
 oneParticle = False
-test= True
-
-nmax = 1
-alphaSpecies = ("h","p")
-betaSpecies = ("h","p") 
-
-for i in betaSpecies: 
-	for j in alphaSpecies: 
-		for k in betaSpecies: 
-			for l in alphaSpecies: 
-				if abs(checkNumberOfParticles( [i,l,k] ))==1 and \
-				abs(checkNumberOfParticles( [j] ))==1 :
-					nOccup = 0
-					nVirtual = 0
-					indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
-					indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
-					indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
-					indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
-					print indexj, "-", indexi, indexl, indexk
 
 
-					indexj = "a_{"+indexj+"}^{\dagger}"
-					indexi = "a_{"+indexi+"}"
-					indexl = "a_{"+indexl+"}^{\dagger}"
-					indexk = "a_{"+indexk+"}"
-					superOperator = "\hat{H}"
+if selectedMatrix == "xHx":
+	nmax = 1
+	alphaSpecies = ("h","p")
+	betaSpecies = ("h","p") 
+
+	print "One Particle"
+	#(a|Ha)
+	for i in alphaSpecies: 
+		for j in betaSpecies: 
+			nOccup = 0
+			nVirtual = 0
+			print j+"-"+i,
+			indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
+			indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+			print indexj, indexi
+
+			indexj = "a_{"+indexj+"}^{\dagger}"
+			indexi = "a_{"+indexi+"}"
+			superOperator = "\hat{H}"
+			#superOperator = "\hat{V}"
+			#solves ther ji-lk term 
+			V0 = subOperators (+1,[indexj,superOperator,indexi ], "" )
+			finalTerms = solveTerm.solveTerm (nmax,V0)
+	print ""
+
+if selectedMatrix == "xHxyz":
+
+	nmax = 1
+	alphaSpecies = ("h","p")
+	betaSpecies = ("h","p") 
+
+	# (a|HF) 
+	for i in betaSpecies: 
+		for j in alphaSpecies: 
+			for k in betaSpecies: 
+				for l in alphaSpecies: 
+					if abs(checkNumberOfParticles( [i,l,k] ))==1 and \
+					abs(checkNumberOfParticles( [j] ))==1 :
+						nOccup = 0
+						nVirtual = 0
+						indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
+						indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+						indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
+						indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
+						print indexj, "-", indexi, indexl, indexk
 
 
-					print indexj, "-", indexi, indexl, indexk
-					#solves ther ji-lk term 
-					superOperator = "\hat{V}"
-					#superOperator = "\hat{H}"
-					#solves ther ji-lk term 
-					V0 = subOperators (+1,[indexj,superOperator,\
-						indexi,indexl,indexk ], "" )
-					finalTerms = solveTerm.solveTerm (nmax,V0)
-
-					stop
+						indexj = "a_{"+indexj+"}^{\dagger}"
+						indexi = "a_{"+indexi+"}"
+						indexl = "a_{"+indexl+"}^{\dagger}"
+						indexk = "a_{"+indexk+"}"
+						superOperator = "\hat{H}"
 
 
-# two electrons
-#for i in betaSpecies: 
-#	for j in alphaSpecies: 
-#		for k in betaSpecies: 
-#			for l in alphaSpecies: 
-#				for m in alphaSpecies: 
-#					for n in alphaSpecies: 
-#
-#						if abs(checkNumberOfParticles( [l,k,m,n] ))==2 and \
-#						abs(checkNumberOfParticles( [j,i] ))==2 :
-#							print j+i+"-"+l+k+m+n
-#							nOccup = 0
-#							nVirtual = 0
-#							indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
-#							indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
-#							indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
-#							indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
-#							indexm, nOccup, nVirtual = getIndexForParticleHole(m,nOccup,nVirtual)
-#							indexn, nOccup, nVirtual = getIndexForParticleHole(n,nOccup,nVirtual)
-#							print indexj, indexi, "-",indexl, indexk,indexm,indexn
-#
-#
-#							indexj = "a_{"+indexj+"}^{\dagger}"
-#							indexi = "a_{"+indexi+"}^{\dagger}"
-#							indexl = "a_{"+indexl+"}"
-#							indexk = "a_{"+indexk+"}"
-#							indexm = "a_{"+indexm+"}"
-#							indexn = "a_{"+indexn+"}"
-#							superOperator = "\hat{H}"
-#
-#							#solves ther ji-lk term 
-#							superOperator = "\hat{V}"
-#							#superOperator = "\hat{H}"
-#							#solves ther ji-lk term 
-#							V0 = subOperators (+1,[indexj,indexi,superOperator,\
-#								indexl,indexk,indexm,indexn ], "" )
-#							finalTerms = solveTerm.solveTerm (nmax,V0)
+						print indexj, "-", indexl, indexi, indexk
+						#solves ther ji-lk term 
+						superOperator = "\hat{V}"
+						#superOperator = "\hat{H}"
+						#solves ther ji-lk term 
+						V0 = subOperators (+1,[indexj,superOperator,\
+							indexl,indexi,indexk ], "" )
+						finalTerms = solveTerm.solveTerm (nmax,V0)
 
+						stop 
 
 
 if selectedMatrix == "xxHxx":
@@ -183,31 +172,44 @@ if twoParticles :
 
 			print ""
 
-if selectedMatrix == "xHx":
-	nmax = 1
-	alphaSpecies = ("h")
-	betaSpecies = ("h") 
-	oneParticle = True
 
-if oneParticle :
+# two electrons
+#for i in betaSpecies: 
+#	for j in alphaSpecies: 
+#		for k in betaSpecies: 
+#			for l in alphaSpecies: 
+#				for m in alphaSpecies: 
+#					for n in alphaSpecies: 
+#
+#						if abs(checkNumberOfParticles( [l,k,m,n] ))==2 and \
+#						abs(checkNumberOfParticles( [j,i] ))==2 :
+#							print j+i+"-"+l+k+m+n
+#							nOccup = 0
+#							nVirtual = 0
+#							indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
+#							indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+#							indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
+#							indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
+#							indexm, nOccup, nVirtual = getIndexForParticleHole(m,nOccup,nVirtual)
+#							indexn, nOccup, nVirtual = getIndexForParticleHole(n,nOccup,nVirtual)
+#							print indexj, indexi, "-",indexl, indexk,indexm,indexn
+#
+#
+#							indexj = "a_{"+indexj+"}^{\dagger}"
+#							indexi = "a_{"+indexi+"}^{\dagger}"
+#							indexl = "a_{"+indexl+"}"
+#							indexk = "a_{"+indexk+"}"
+#							indexm = "a_{"+indexm+"}"
+#							indexn = "a_{"+indexn+"}"
+#							superOperator = "\hat{H}"
+#
+#							#solves ther ji-lk term 
+#							superOperator = "\hat{V}"
+#							#superOperator = "\hat{H}"
+#							#solves ther ji-lk term 
+#							V0 = subOperators (+1,[indexj,indexi,superOperator,\
+#								indexl,indexk,indexm,indexn ], "" )
+#							finalTerms = solveTerm.solveTerm (nmax,V0)
 
-	print "One Particle"
 
-	for i in alphaSpecies: 
-		for j in betaSpecies: 
-			nOccup = 0
-			nVirtual = 0
-			print j+"-"+i,
-			indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
-			indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
-			print indexj, indexi
-
-			indexj = "a_{"+indexj+"}^{\dagger}"
-			indexi = "a_{"+indexi+"}"
-			#superOperator = "\hat{H}"
-			superOperator = "\hat{V}"
-			#solves ther ji-lk term 
-			V0 = subOperators (+1,[indexj,superOperator,indexi ], "" )
-			finalTerms = solveTerm.solveTerm (nmax,V0)
-	print ""
 

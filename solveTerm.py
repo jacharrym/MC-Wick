@@ -5,6 +5,7 @@ import copy
 import wick
 import sumTerms
 import removeSinglesExcitations
+import removeExcitations
 from wick import operatorchain
 import applydeltas
 
@@ -13,8 +14,8 @@ global virtualIndexesAlpha
 global occupiedIndexesBeta
 global virtualIndexesBeta
 
-occupiedIndexesAlpha = ("i","j","k","l","m","n","o")
-virtualIndexesAlpha  = ("a","b","c","d","e","f","g","h")
+occupiedIndexesAlpha = ("i","j","k","l","m","n","o","pi","qi")
+virtualIndexesAlpha  = ("a","b","c","d","e","f","g","h","pa","qa")
 occupiedIndexesBeta  = ("I","J","K","L","M","N","O")
 virtualIndexesBeta  = ("A","B","C","D","E","F","G","H")
 
@@ -123,10 +124,10 @@ def solveTerm (nmax,V0):
 	V3string = V34[0].string + V12[1].string[nAyZ:]
 	V4string = V34[1].string + V12[1].string[nAyZ:] 
 
-	print V1string
-	print V2string
-	print V3string
-	print V4string
+	#print V1string
+	#print V2string
+	#print V3string
+	#print V4string
 
 	# get all signs
 	V1sign = V12[0].sign * V34[0].sign
@@ -172,8 +173,8 @@ def solveTerm (nmax,V0):
 	# Express perturbation operator
 	if V0.string[nmax] == "\hat{V}": 
 
-		integralA = "p,q,||,r,s"
-		integralB = "p,qi,||,r,qi"
+		integralA = ["p","q","||","r","s"]
+		integralB = ["p","qi","||","r","qi"]
 		auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
 		auxV12 = ["a_{p}^{\dagger}", "a_{r}"]
 
@@ -247,14 +248,13 @@ def solveTerm (nmax,V0):
 
 	if V0.string[nmax] == "\hat{V}": 
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
-		for i in range(0,len(allV)) :
-			print i+1,allV[i].string
+		#for i in range(0,len(allV)) :
+			#print i+1,allV[i].string
 	newV = list()
 		
 	i = 0
 	for Vi in allV :
 		i = i + 1
-		print i
 		# Perform Wick's theorem
 		auxVi = wick.wick(Vi)
 		# save only the non zero terms	
@@ -289,27 +289,22 @@ def solveTerm (nmax,V0):
 	#print "summing"
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	print "Result for term1"
-	for i in expandedTerms :
-		print i.sign, i.scalar, i.chain
-
-
 	if V0.string[nmax] == "\hat{V}": 
 		#print "call to apply deltas!"
 		expandedTerms = applydeltas.applyDeltas (expandedTerms)
 
-	print "Result for term2"
-	for i in expandedTerms :
-		print i.sign, i.scalar, i.chain
-
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	print "Result for term3"
+	if V0.string[nmax] == "\hat{V}": 
+		#print "call to apply deltas!"
+		expandedTerms = removeExcitations.removeExcitations(expandedTerms)
+
+	print "Result for term4"
+	print "="
 	for i in expandedTerms :
 		print i.sign, i.scalar, i.chain
-	print "="
-
+	print "_"*20
 
 	return expandedTerms
 

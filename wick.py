@@ -25,10 +25,10 @@ global virtualIndexesB
 fermions = True
 bosons = False
 printZeroValues = False
-occupiedIndexes = ("i","j","k","l","m","n","o")
+occupiedIndexes = ("i","j","k","l","m","n","o","pi","qi","ri","si")
 dummyIndexes = ("p","q","r","s")
 #dummyIndexes = ()
-virtualIndexes = ("a","b","c","d","e","f","g","h")
+virtualIndexes = ("a","b","c","d","e","f","g","h","pa","qa","ra","sa")
 occupiedIndexesB = ("I","J","K","L","M","N","O","P","Q","R","S")
 virtualIndexesB = ("A","B","C","D","E","F","G","H")
 
@@ -544,10 +544,10 @@ def wick (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	print "Wick, Sum terms"
-	for i in range(0,len(auxMatrixOfCombinations)):
-		for j in range(0, len(auxMatrixOfCombinations[i])):
-			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+#	print "Wick, Sum terms"
+#	for i in range(0,len(auxMatrixOfCombinations)):
+#		for j in range(0, len(auxMatrixOfCombinations[i])):
+#			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations
@@ -580,8 +580,8 @@ def wick (Vi) :
 #V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{b}^{\\dagger}', 'a_{c}'],"")
 #
 #wick (V0)
-V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
-wick (V0)
+#V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
+#wick (V0)
 
 #V1 = subOperators (-1,[V0.string[1], V0.string[0], V0.string[3], V0.string[4], V0.string[2]], "" )
 #if "{H}" in V1.string[4] :

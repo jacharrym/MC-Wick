@@ -75,14 +75,14 @@ def indexDelta ( delta ) :
 ## Return the sign "1" for "+" and "-1" for "-"
 def valueOfSign (sign) :
 	if sign == "+":
-		return 1
+		return 1.0
 	elif sign == "-":
-		return -1
+		return -1.0
 
 def symbolOfSign (sign) :
-	if sign == 1:
+	if sign == 1.0:
 		return "+"
-	elif sign == -1:
+	elif sign == -1.0:
 		return "-"
 def setIndex ( integral, vector, sign, exchange ) :
 	dummyIndex = ("p","q","r","s")	
@@ -144,19 +144,8 @@ def setIndex ( integral, vector, sign, exchange ) :
 
 def applyDeltas (vector) :
 
-	#listName = sys.argv[1]
-	#listFile = open (listName, "r")
-	#listLines = listFile.readlines()
-
-	#outputName = listName + ".out"
-	#outputFile = open (outputName, "w")
-
 	includeExchange = False
 	auxVector = list()
-
-	#setIndex("pq","rs")
-
-	print "apply"
 
 	for i in range(0,len(vector)) :
 		line1 = vector[i]
@@ -164,14 +153,16 @@ def applyDeltas (vector) :
 
 		if "||" in line1.scalar :
 			integral = line1.scalar
-			integral = integral.split(",")
+			#integral = integral.split(",")
 			del integral[integral.index("||")]
 			includeExchange = True
 		else :
 
 			integral = line1.scalar
-			integral = integral.split(",")
+			#integral = integral.split(",")
 			del integral[integral.index("|")]
+			includeExchange = False
+
 		auxLine1 = line1.chain # Split the deltas
 		auxIntegral = integral
 
