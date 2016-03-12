@@ -80,10 +80,10 @@ if selectedMatrix == "xHx":
 
 			indexj = "a_{"+indexj+"}^{\dagger}"
 			indexi = "a_{"+indexi+"}"
-			superOperator = "\hat{H}"
-			#superOperator = "\hat{V}"
+			#superOperator = "\hat{H}"
+			superOperator = "\hat{V}"
 			#solves ther ji-lk term 
-			V0 = subOperators (+1,[indexj,superOperator,indexi ], "" )
+			V0 = subOperators (+1,[[indexj],[superOperator,indexi ]], "" )
 			finalTerms = solveTerm.solveTerm (nmax,V0)
 	print ""
 
@@ -121,11 +121,15 @@ if selectedMatrix == "xHxyz":
 						superOperator = "\hat{V}"
 						#superOperator = "\hat{H}"
 						#solves ther ji-lk term 
-						V0 = subOperators (+1,[indexj,superOperator,\
-							indexl,indexi,indexk ], "" )
+						# (a | X f)		
+						#V0 = subOperators (+1,[indexj,superOperator,\
+						#	indexl,indexi,indexk ], "" )
+						# (f | X a)		
+						V0 = subOperators (+1,[[indexl, indexi, indexk],\
+							[superOperator, indexj ]], "" )
+
 						finalTerms = solveTerm.solveTerm (nmax,V0)
 
-						stop 
 
 
 if selectedMatrix == "xxHxx":

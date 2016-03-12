@@ -128,11 +128,20 @@ def setIndex ( integral, vector, sign, exchange ) :
 		kk = order[lower(k)[0]]
 		ll = order[lower(l)[0]]
 
+		# this is valid only if the basis functions are real.
 		if ii > jj:
 			ij = [j,i]
 			sign = -1*sign
 		else :
 			ij = [i,j]
+
+		#   < ij || kl > =     < ij | kl > - < ij | lk >
+		# - < ij || kl > = - ( < ij | kl > - < ij | lk > )
+		# - < ij || kl > =   - < ij | kl > + < ij | lk > 
+		# - < ij || kl > =     < ij | lk > - < ij | kl >  
+		# - < ij || kl > =     < ij || lk > 
+		#   < ij || kl > =   - < ij || lk > 
+
 		if kk > ll :
 			kl = [l,k]
 			sign = -1*sign
@@ -171,10 +180,16 @@ def applyDeltas (vector) :
 			if "delta" in j :
 				if ( indexDelta(j)[0][0] in auxIntegral ) : 
 					for u in range(0,len(auxIntegral)) :		
+						if not indexDelta(j)[0][0] == indexDelta(j)[1][0]:
+							auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[1][0], indexDelta(j)[1] ) 
 						auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[0][0], indexDelta(j)[1] ) 
 
 				elif ( indexDelta(j)[1][0] in auxIntegral ) : 
 					for u in range(0,len(auxIntegral)) :		
+
+						if not indexDelta(j)[1][0] == indexDelta(j)[0][0]:
+							auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[0][0], indexDelta(j)[0] ) 
+
 						auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[1][0], indexDelta(j)[0] ) 
 
 				else :
@@ -184,7 +199,6 @@ def applyDeltas (vector) :
 			else: 
 				addDelta.append (j)
 				#addDelta = addDelta + j
-
 		auxIntegral, addDelta, sign1, exchange = setIndex(auxIntegral, addDelta, sign1,includeExchange)
 
 		if not sign1 == 0 :

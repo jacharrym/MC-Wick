@@ -62,10 +62,15 @@ def anticommutator ( A, B ) :
 
 def superOperator ( H, v ) :
 	## \hat{H} v = [v,H]_- = vH - Hv
-	vH = subOperators (+1.0, v + H, "")
-	Hv = subOperators (-1.0, H + v, "")
-	vHHv = [vH,Hv]
-	return vHHv
+	#vH = subOperators (+1.0, v + H, "")
+	#Hv = subOperators (-1.0, H + v, "")
+	#vHHv = [vH,Hv]
+	## \hat{H} v = [H,v]_- = Hv - vH
+	vH = subOperators (-1.0, v + H, "")
+	Hv = subOperators (+1.0, H + v, "")
+	HvvH = [Hv,vH]
+
+	return HvvH
 
 def calculateEpsilon ( vector ) :
 
@@ -101,15 +106,24 @@ def solveTerm (nmax,V0):
 	# = X^\dagger w^\dagger y Z A (1) - X^\dagger w^\dagger A y Z (2)  + 
 	# y Z A  X^\dagger w^\dagger (3) - A y Z  X^\dagger w^\dagger (4)
 
+	# x \hat{A} y element
+	# = [x^\dagger , \hat{A} y ]_+
+	# = x^\dagger \hat{A} y + \hat{A} y x^\dagger 
+	# = x^\dagger A (1) y - X^\dagger y A (2)  + 
+	# A y x^\dagger (3) - y A x^\dagger (4)
+
 	# Set the initial element
-	wX = V0.string[0:nmax]
+	wX = V0.string[0]
 	Xw = wX
 	Xw.reverse()
-	A = [V0.string[nmax]] #list of one element
-	yZ = V0.string[nmax+1:]
+	
+	A = [V0.string[1][0]]
+	yZ = V0.string[1][1:]
 	AyZ = A + yZ
 	nXw = len(Xw)
 	nAyZ = len(AyZ)
+
+	print Xw,A,yZ
 	print nXw,nAyZ
 
 	# expand the anticommutator and superoperator
@@ -118,11 +132,18 @@ def solveTerm (nmax,V0):
 	V34 = superOperator (A,yZ)
 
 	# get all chains of operators
-	V1string = V12[0].string[0:nXw] + V34[0].string#
-	V2string = V12[0].string[0:nXw] + V34[1].string#
+	#V1string = V12[0].string[0:nXw] + V34[0].string#
+	#V2string = V12[0].string[0:nXw] + V34[1].string#
 
-	V3string = V34[0].string + V12[1].string[nAyZ:]
-	V4string = V34[1].string + V12[1].string[nAyZ:] 
+	#V3string = V34[0].string + V12[1].string[nAyZ:]
+	#V4string = V34[1].string + V12[1].string[nAyZ:] 
+
+	V2string = V12[0].string[0:nXw] + V34[0].string#
+	V1string = V12[0].string[0:nXw] + V34[1].string#
+
+	V4string = V34[0].string + V12[1].string[nAyZ:]
+	V3string = V34[1].string + V12[1].string[nAyZ:] 
+
 
 	#print V1string
 	#print V2string
@@ -130,10 +151,16 @@ def solveTerm (nmax,V0):
 	#print V4string
 
 	# get all signs
-	V1sign = V12[0].sign * V34[0].sign
-	V2sign = V12[0].sign * V34[1].sign
-	V3sign = V12[1].sign * V34[0].sign
-	V4sign = V12[1].sign * V34[1].sign
+	#V1sign = V12[0].sign * V34[0].sign
+	#V2sign = V12[0].sign * V34[1].sign
+	#V3sign = V12[1].sign * V34[0].sign
+	#V4sign = V12[1].sign * V34[1].sign
+
+	V2sign = V12[0].sign * V34[0].sign
+	V1sign = V12[0].sign * V34[1].sign
+	V4sign = V12[1].sign * V34[0].sign
+	V3sign = V12[1].sign * V34[1].sign
+
 
 	# build each term
 	V1 = subOperators (V1sign,V1string, "" )
@@ -143,13 +170,13 @@ def solveTerm (nmax,V0):
 
 
 	#reunite all four terms
-	if V0.string[nmax] == "\hat{H}": 
+	if "\hat{H}" in A : 
 		allV = [V1,V2,V3,V4]
 
 
 
 	# Apply reference Hamiltonian operator
-	if V0.string[nmax] == "\hat{H}": 
+	if "\hat{H}" in A : 
 		for i in range(0,len(allV)) :
 			
 			operatorPosition = allV[i].string.index("\hat{H}")
@@ -167,11 +194,11 @@ def solveTerm (nmax,V0):
 
 			print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
-	if V0.string[nmax] == "\hat{V}": 
+	if "\hat{V}" in A : 
 		allV = [V1,V2,V3,V4] #we begin from these four
 
 	# Express perturbation operator
-	if V0.string[nmax] == "\hat{V}": 
+	if "\hat{V}" in A : 
 
 		integralA = ["p","q","||","r","s"]
 		integralB = ["p","qi","||","r","qi"]
@@ -246,10 +273,12 @@ def solveTerm (nmax,V0):
 
 			#print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
-	if V0.string[nmax] == "\hat{V}": 
+	if "\hat{V}" in A : 
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
-		#for i in range(0,len(allV)) :
-			#print i+1,allV[i].string
+		#allV = [V1,V2,V3,V4]
+		#allV = [V12,V22,V32,V42]
+		for i in range(0,len(allV)) :
+			print i+1,allV[i].sign,allV[i].string
 	newV = list()
 		
 	i = 0
@@ -270,7 +299,7 @@ def solveTerm (nmax,V0):
 			for iterm in ncombinations:
 				# remove hamiltoniand matrix elements between ground state and single excitations determinants.
 
-				if V0.string[nmax] == "\hat{H}": 
+				if "\hat{H}" in V0.string : 
 					removeiterm = removeSinglesExcitations.removeSinglesExcitations(iterm)
 				else :
 					removeiterm = False
@@ -285,22 +314,58 @@ def solveTerm (nmax,V0):
 						expandedTerms.append (newTerm)	
 
 
+	print "Result for term1"
+	print "="
+	for i in expandedTerms :
+		print i.sign, i.scalar, i.chain
+	print "_"*20
+
 	# Sum all terms in the propagator matrix element
 	#print "summing"
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	if V0.string[nmax] == "\hat{V}": 
+	print "Result for term2"
+	print "="
+	for i in expandedTerms :
+		print i.sign, i.scalar, i.chain
+	print "_"*20
+
+
+	if "\hat{V}" in A : 
 		#print "call to apply deltas!"
 		expandedTerms = applydeltas.applyDeltas (expandedTerms)
+
+	print "Result for term3"
+	print "="
+	for i in expandedTerms :
+		print i.sign, i.scalar, i.chain
+	print "_"*20
+
 
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	if V0.string[nmax] == "\hat{V}": 
+	if "\hat{V}" in A: 
 		#print "call to apply deltas!"
 		expandedTerms = removeExcitations.removeExcitations(expandedTerms)
 
-	print "Result for term4"
+	#print "Result for term4"
+	#print "="
+	#for i in expandedTerms :
+	#	print i.sign, i.scalar, i.chain
+	#print "_"*20
+
+
+	if "\hat{V}" in A : 
+		#print "call to apply deltas!"
+		expandedTerms = applydeltas.applyDeltas (expandedTerms)
+
+
+	# Sum all terms in the propagator matrix element
+	expandedTerms = sumTerms.sumTerms(expandedTerms)
+
+
+	print "Result for term5"
 	print "="
 	for i in expandedTerms :
 		print i.sign, i.scalar, i.chain

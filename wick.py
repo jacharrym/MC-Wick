@@ -544,10 +544,10 @@ def wick (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-#	print "Wick, Sum terms"
-#	for i in range(0,len(auxMatrixOfCombinations)):
-#		for j in range(0, len(auxMatrixOfCombinations[i])):
-#			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	print "Wick, Sum terms"
+	for i in range(0,len(auxMatrixOfCombinations)):
+		for j in range(0, len(auxMatrixOfCombinations[i])):
+			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations
@@ -578,8 +578,19 @@ def wick (Vi) :
 #V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{b}^{\\dagger}', 'a_{m}'],"")
 ## vv
 #V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{b}^{\\dagger}', 'a_{c}'],"")
+
+
+#V0 = subOperators(-0.25, ['a_{i}^{\dagger}', 'a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
+#V0 = subOperators(0.25, ['a_{i}^{\\dagger}', 'a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'],"")
+
+V0 = subOperators(-0.25, ['a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
+#V0 = subOperators(0.25, ['a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'],"")
 #
-#wick (V0)
+#V0 = subOperators(1.0, ['a_{j}', 'a_{p}^{\dagger}', 'a_{r}'],"")
+#V0 = subOperators(-1.0, ['a_{p}^{\dagger}', 'a_{r}', 'a_{j}'],"")
+
+
+wick (V0)
 #V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
 #wick (V0)
 
