@@ -544,41 +544,16 @@ def wick (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	print "Wick, Sum terms"
-	for i in range(0,len(auxMatrixOfCombinations)):
-		for j in range(0, len(auxMatrixOfCombinations[i])):
-			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	#print "Wick, Sum terms"
+	#for i in range(0,len(auxMatrixOfCombinations)):
+	#	for j in range(0, len(auxMatrixOfCombinations[i])):
+	#		print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations
 
 
 ################################################
-################################################
-################################################
-
-#V0 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}" ]  
-#V0 = subOperators (+1,["a_{l}", "a_{p}^{\dagger}"],"")
-
-#V0 = subOperators (+1,["a_{a}","a_{b}", "a_{c}","a_{d}^{\dagger}", "a_{e}^{\dagger}","a_{f}^{\dagger}"], "" )
-#V0 = subOperators (+1,["a_{p}^{\dagger}", 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{a}', "a_{i}^{\dagger}"], "" )
-#V0 = subOperators (+1,['a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{i}', 'a_{a}^{\dagger}'], "" )
-#V0 = subOperators (+1,["a_{i}","a_{a}^{\dagger}"], "" )
-
-#V0 = subOperators (+1,["a_{r}","a_{q}","a_{p}^{\dagger}","a_{r}^{\dagger}"], "" )
-#V0 = subOperators (+1,["a_{r}","a_{p}^{\dagger}","a_{q}","a_{r}^{\dagger}"], "" )
-#V0 = subOperators (+1,["a_{r}","a_{q}","a_{p}","a_{r}^{\dagger}"], "" )
-
-#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{p}^{\\dagger}', 'a_{q}'],"")
-# oo
-#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{m}^{\\dagger}', 'a_{n}'],"")
-## ov
-#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{m}^{\\dagger}', 'a_{b}'],"")
-## vo
-#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{b}^{\\dagger}', 'a_{m}'],"")
-## vv
-#V0 = subOperators (+1,['a_{j}', 'a_{k}', 'a_{b}^{\\dagger}', 'a_{c}'],"")
-
 
 #V0 = subOperators(-0.25, ['a_{i}^{\dagger}', 'a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
 #V0 = subOperators(0.25, ['a_{i}^{\\dagger}', 'a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'],"")
@@ -601,12 +576,5 @@ wick (V0)
 
 # call wick
 
-# test normalorder
-#outputV = ['a_{p}^{\dagger}', 'a_{q}', 'a_{s}', 'a_{r}']
-#uxSign = 1
-
-#print auxSign,outputV
-#outputV, auxSign = normalOrder(outputV,auxSign) ## Ordered, only it is used for the ncombination-1
-#print auxSign,outputV
 
 

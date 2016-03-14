@@ -9,9 +9,9 @@ global virtualIndexesAlpha
 global occupiedIndexesBeta
 global virtualIndexesBeta
 
-occupiedIndexesAlpha = ("i","j","k","l","m","n","o","p","q","r","s")
+occupiedIndexesAlpha = ("i","j","k","l","m","n","o")
 virtualIndexesAlpha  = ("a","b","c","d","e","f","g","h")
-occupiedIndexesBeta  = ("I","J","K","L","M","N","O","P","Q","R","S")
+occupiedIndexesBeta  = ("I","J","K","L","M","N","O")
 virtualIndexesBeta  = ("A","B","C","D","E","F","G","H")
 
 
@@ -53,8 +53,9 @@ def checkNumberOfParticles ( vector ) :
 				
 
 
-selectedMatrix = "xHx"
-#selectedMatrix = "xHxyz"
+#selectedMatrix = "xHx"
+selectedMatrix = "xHxyz"
+#selectedMatrix = "xyzHxyz"
 #selectedMatrix = "xxHxx"
 #selectedMatrix = "xyHxy"
 
@@ -80,8 +81,8 @@ if selectedMatrix == "xHx":
 
 			indexj = "a_{"+indexj+"}^{\dagger}"
 			indexi = "a_{"+indexi+"}"
-			#superOperator = "\hat{H}"
-			superOperator = "\hat{V}"
+			superOperator = "\hat{H}"
+			#superOperator = "\hat{V}"
 			#solves ther ji-lk term 
 			V0 = subOperators (+1,[[indexj],[superOperator,indexi ]], "" )
 			finalTerms = solveTerm.solveTerm (nmax,V0)
@@ -98,37 +99,92 @@ if selectedMatrix == "xHxyz":
 		for j in alphaSpecies: 
 			for k in betaSpecies: 
 				for l in alphaSpecies: 
-					if abs(checkNumberOfParticles( [i,l,k] ))==1 and \
-					abs(checkNumberOfParticles( [j] ))==1 :
+					if abs(checkNumberOfParticles( [j,l,k] ))==1 and \
+					abs(checkNumberOfParticles( [i] ))==1 :
 						nOccup = 0
 						nVirtual = 0
-						indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
 						indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+						indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
 						indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
 						indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
-						print indexj, "-", indexi, indexl, indexk
 
 
-						indexj = "a_{"+indexj+"}^{\dagger}"
-						indexi = "a_{"+indexi+"}"
+						indexi = "a_{"+indexi+"}^{\dagger}"
+						indexj = "a_{"+indexj+"}"
 						indexl = "a_{"+indexl+"}^{\dagger}"
 						indexk = "a_{"+indexk+"}"
+
+
+						#print indexj, "-", indexl, indexi, indexk
+						#print l+"^{\dagger}"+ i+k
+						print i+"-"+l+j+k
+
+						#solves ther ji-lk term 
+						#superOperator = "\hat{V}"
 						superOperator = "\hat{H}"
 
+						print "("+indexi+"|"+superOperator+indexl+indexj+indexk+")"
 
-						print indexj, "-", indexl, indexi, indexk
-						#solves ther ji-lk term 
-						superOperator = "\hat{V}"
-						#superOperator = "\hat{H}"
-						#solves ther ji-lk term 
 						# (a | X f)		
-						#V0 = subOperators (+1,[indexj,superOperator,\
-						#	indexl,indexi,indexk ], "" )
+						V0 = subOperators (+1,[[indexi],[superOperator,\
+							indexl,indexj,indexk] ], "" )
 						# (f | X a)		
-						V0 = subOperators (+1,[[indexl, indexi, indexk],\
-							[superOperator, indexj ]], "" )
+						#V0 = subOperators (+1,[[indexl, indexi, indexk],\
+						#	[superOperator, indexj ]], "" )
 
 						finalTerms = solveTerm.solveTerm (nmax,V0)
+
+if selectedMatrix == "xyzHxyz":
+
+	nmax = 1
+	alphaSpecies = ("h","p")
+	betaSpecies = ("h","p") 
+
+	# (a|HF) 
+	for i in betaSpecies: 
+		for j in alphaSpecies: 
+			for k in betaSpecies: 
+				for l in alphaSpecies: 
+					for m in betaSpecies: 
+						for n in alphaSpecies: 
+
+							if abs(checkNumberOfParticles( [i,j,k] ))==1 and \
+							abs(checkNumberOfParticles( [l,m,n] ))==1 :
+								nOccup = 0
+								nVirtual = 0
+								indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+								indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
+								indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
+								indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
+								indexm, nOccup, nVirtual = getIndexForParticleHole(m,nOccup,nVirtual)
+								indexn, nOccup, nVirtual = getIndexForParticleHole(n,nOccup,nVirtual)
+
+
+								indexi = "a_{"+indexi+"}"
+								indexj = "a_{"+indexj+"}^{\dagger}"
+								indexk = "a_{"+indexk+"}^{\dagger}"
+								indexl = "a_{"+indexl+"}^{\dagger}"
+								indexm = "a_{"+indexm+"}"
+								indexn = "a_{"+indexn+"}"
+
+								#print indexj, "-", indexl, indexi, indexk
+								#print l+"^{\dagger}"+ i+k
+								print i+j+k+"-"+l+m+n
+
+								#solves ther ji-lk term 
+								#superOperator = "\hat{V}"
+								superOperator = "\hat{H}"
+
+								print "("+indexi+indexj+indexk+"|"+superOperator+indexl+indexm+indexn+")"
+
+								# (a | X f)		
+								V0 = subOperators (+1,[[indexi,indexj,indexk],[superOperator,\
+									indexl,indexm,indexn] ], "" )
+								# (f | X a)		
+								#V0 = subOperators (+1,[[indexl, indexi, indexk],\
+								#	[superOperator, indexj ]], "" )
+
+								finalTerms = solveTerm.solveTerm (nmax,V0)
 
 
 

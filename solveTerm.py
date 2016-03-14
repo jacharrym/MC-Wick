@@ -95,10 +95,7 @@ def calculateEpsilon ( vector ) :
 	return output
 
 def solveTerm (nmax,V0):
-	#nmax = 2
 	#pQrS
-	#V0 = subOperators (+1,["a_{a}^{\dagger}", "a_{B}^{\dagger}","\hat{H}","a_{k}","a_{C}" ], "" )
-	print "V0",V0.string
 
 	# wX \hat{A} yZ element
 	# = [X^\dagger w^\dagger , \hat{A} y Z ]_+
@@ -124,7 +121,7 @@ def solveTerm (nmax,V0):
 	nAyZ = len(AyZ)
 
 	print Xw,A,yZ
-	print nXw,nAyZ
+	#print nXw,nAyZ
 
 	# expand the anticommutator and superoperator
 	#V12 = anticommutator (Xw,AyZ)
@@ -143,7 +140,6 @@ def solveTerm (nmax,V0):
 
 	V4string = V34[0].string + V12[1].string[nAyZ:]
 	V3string = V34[1].string + V12[1].string[nAyZ:] 
-
 
 	#print V1string
 	#print V2string
@@ -183,16 +179,18 @@ def solveTerm (nmax,V0):
 			if operatorPosition == 0 or operatorPosition == (len(allV[i].string)-1) :
 				allV[i].scalar = ["E"]
 				del allV[i].string[operatorPosition]
-			elif operatorPosition == nXw:
+			elif operatorPosition == nXw and i == 1 :
 				allV[i].scalar = ["E"]
+				print "nXw", allV[i].string[nXw+1:]
 				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[nXw+1:])
 				del allV[i].string[nXw]
-			elif operatorPosition == (nAyZ-1):
+			elif operatorPosition == (nAyZ-1) and i == 2:
 				allV[i].scalar = ["E"]
+				print "nAyz", allV[i].string[:nAyZ-1]
 				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[:nAyZ-1])
 				del allV[i].string[nAyZ-1]
 
-			print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
+			print "H"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
 	if "\hat{V}" in A : 
 		allV = [V1,V2,V3,V4] #we begin from these four
@@ -277,8 +275,8 @@ def solveTerm (nmax,V0):
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
 		#allV = [V1,V2,V3,V4]
 		#allV = [V12,V22,V32,V42]
-		for i in range(0,len(allV)) :
-			print i+1,allV[i].sign,allV[i].string
+		#for i in range(0,len(allV)) :
+		#	print i+1,allV[i].sign,allV[i].string
 	newV = list()
 		
 	i = 0
@@ -299,7 +297,7 @@ def solveTerm (nmax,V0):
 			for iterm in ncombinations:
 				# remove hamiltoniand matrix elements between ground state and single excitations determinants.
 
-				if "\hat{H}" in V0.string : 
+				if "\hat{H}" in A : 
 					removeiterm = removeSinglesExcitations.removeSinglesExcitations(iterm)
 				else :
 					removeiterm = False
@@ -324,22 +322,22 @@ def solveTerm (nmax,V0):
 	#print "summing"
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	print "Result for term2"
-	print "="
-	for i in expandedTerms :
-		print i.sign, i.scalar, i.chain
-	print "_"*20
+	#print "Result for term2"
+	#print "="
+	#for i in expandedTerms :
+	#	print i.sign, i.scalar, i.chain
+	#print "_"*20
 
 
 	if "\hat{V}" in A : 
 		#print "call to apply deltas!"
 		expandedTerms = applydeltas.applyDeltas (expandedTerms)
 
-	print "Result for term3"
-	print "="
-	for i in expandedTerms :
-		print i.sign, i.scalar, i.chain
-	print "_"*20
+	#print "Result for term3"
+	#print "="
+	#for i in expandedTerms :
+	#	print i.sign, i.scalar, i.chain
+	#print "_"*20
 
 
 	# Sum all terms in the propagator matrix element
