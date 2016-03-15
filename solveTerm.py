@@ -8,6 +8,7 @@ import removeSinglesExcitations
 import removeExcitations
 from wick import operatorchain
 import applydeltas
+import checkDeltas
 
 global occupiedIndexesAlpha
 global virtualIndexesAlpha
@@ -328,6 +329,9 @@ def solveTerm (nmax,V0):
 	#	print i.sign, i.scalar, i.chain
 	#print "_"*20
 
+	if "\hat{H}" in A : 
+		#print "call to apply deltas!"
+		expandedTerms = checkDeltas.checkDeltas (expandedTerms,	Xw, yZ)
 
 	if "\hat{V}" in A : 
 		#print "call to apply deltas!"
