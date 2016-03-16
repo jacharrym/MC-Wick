@@ -544,10 +544,10 @@ def wick (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	#print "Wick, Sum terms"
-	#for i in range(0,len(auxMatrixOfCombinations)):
-	#	for j in range(0, len(auxMatrixOfCombinations[i])):
-	#		print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	print "Wick, Sum terms"
+	for i in range(0,len(auxMatrixOfCombinations)):
+		for j in range(0, len(auxMatrixOfCombinations[i])):
+			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations

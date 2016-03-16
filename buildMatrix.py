@@ -54,8 +54,8 @@ def checkNumberOfParticles ( vector ) :
 
 
 #selectedMatrix = "xHx"
-selectedMatrix = "xHxyz"
-#selectedMatrix = "xyzHxyz"
+#selectedMatrix = "xHxyz"
+selectedMatrix = "xyzHxyz"
 #selectedMatrix = "xxHxx"
 #selectedMatrix = "xyHxy"
 
@@ -120,8 +120,8 @@ if selectedMatrix == "xHxyz":
 						print i+"-"+l+j+k
 
 						#solves ther ji-lk term 
-						#superOperator = "\hat{V}"
-						superOperator = "\hat{H}"
+						superOperator = "\hat{V}"
+						#superOperator = "\hat{H}"
 
 						print "("+indexi+"|"+superOperator+indexl+indexj+indexk+")"
 
@@ -171,20 +171,22 @@ if selectedMatrix == "xyzHxyz":
 								#print l+"^{\dagger}"+ i+k
 								print i+j+k+"-"+l+m+n
 
-								#solves ther ji-lk term 
-								#superOperator = "\hat{V}"
-								superOperator = "\hat{H}"
+								if i+j+k == "hpp" and l+m+n == "hpp":
 
-								print "("+indexi+indexj+indexk+"|"+superOperator+indexl+indexm+indexn+")"
+									#solves ther ji-lk term 
+									#superOperator = "\hat{V}"
+									superOperator = "\hat{H}"
 
-								# (a | X f)		
-								V0 = subOperators (+1,[[indexi,indexj,indexk],[superOperator,\
-									indexl,indexm,indexn] ], "" )
-								# (f | X a)		
-								#V0 = subOperators (+1,[[indexl, indexi, indexk],\
-								#	[superOperator, indexj ]], "" )
+									print "("+indexi+indexj+indexk+"|"+superOperator+indexl+indexm+indexn+")"
 
-								finalTerms = solveTerm.solveTerm (nmax,V0)
+									# (a | X f)		
+									V0 = subOperators (+1,[[indexi,indexj,indexk],[superOperator,\
+										indexl,indexm,indexn] ], "" )
+									# (f | X a)		
+									#V0 = subOperators (+1,[[indexl, indexi, indexk],\
+									#	[superOperator, indexj ]], "" )
+
+									finalTerms = solveTerm.solveTerm (nmax,V0)
 
 
 

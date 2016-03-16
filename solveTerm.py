@@ -113,7 +113,7 @@ def solveTerm (nmax,V0):
 	# Set the initial element
 	wX = V0.string[0]
 	Xw = wX
-	Xw.reverse()
+	#Xw.reverse()
 	
 	A = [V0.string[1][0]]
 	yZ = V0.string[1][1:]
@@ -142,10 +142,10 @@ def solveTerm (nmax,V0):
 	V4string = V34[0].string + V12[1].string[nAyZ:]
 	V3string = V34[1].string + V12[1].string[nAyZ:] 
 
-	#print V1string
-	#print V2string
-	#print V3string
-	#print V4string
+	print V1string
+	print V2string
+	print V3string
+	print V4string
 
 	# get all signs
 	#V1sign = V12[0].sign * V34[0].sign
@@ -182,12 +182,10 @@ def solveTerm (nmax,V0):
 				del allV[i].string[operatorPosition]
 			elif operatorPosition == nXw and i == 1 :
 				allV[i].scalar = ["E"]
-				print "nXw", allV[i].string[nXw+1:]
 				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[nXw+1:])
 				del allV[i].string[nXw]
 			elif operatorPosition == (nAyZ-1) and i == 2:
 				allV[i].scalar = ["E"]
-				print "nAyz", allV[i].string[:nAyZ-1]
 				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[:nAyZ-1])
 				del allV[i].string[nAyZ-1]
 
@@ -347,7 +345,8 @@ def solveTerm (nmax,V0):
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	if "\hat{V}" in A: 
+	#if "\hat{V}" in A or "\hat{H}" in A: 
+	if "\hat{V}" in A : 
 		#print "call to apply deltas!"
 		expandedTerms = removeExcitations.removeExcitations(expandedTerms)
 
