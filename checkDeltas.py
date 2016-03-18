@@ -86,12 +86,27 @@ def checkDeltas (vector, listA, listB ) :
 		for element in auxline1 :
 
 			if "delta" in element:	
+				
 				auxindex = indexDelta(element)
+
+				# if i < j and k < l with delta_{ik} or delta_{jl} then i < l and k < j 
+				if auxindex[0][0] in indexListA:
+					posA =indexListA.index(auxindex[0][0])
+				elif auxindex[0][0] in indexListB:
+					posA =indexListB.index(auxindex[0][0])
+
+				if auxindex[1][0] in indexListA:
+					posB =indexListA.index(auxindex[1][0])
+				elif auxindex[1][0] in indexListB:
+					posB =indexListB.index(auxindex[1][0])
+
 				# i < j < k < l... we can not create/annihilate a particle in the same orbital
 				# if it was previously excited, or viceversa
 				if auxindex[0][0] in indexListA and auxindex[1][0] in indexListA:		
 					newLine.append (0)
 				if auxindex[0][0] in indexListB and auxindex[1][0] in indexListB:		
+					newLine.append (0)
+				if not posA == posB :
 					newLine.append (0)
 				else :
 				# then just keep the deltas

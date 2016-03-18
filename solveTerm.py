@@ -95,6 +95,14 @@ def calculateEpsilon ( vector ) :
 
 	return output
 
+def basicPrinting ( vector, n ) :
+
+	print "Result for term" + n
+	for i in vector : 
+		print i.sign, i.scalar, i.chain
+	print "_"*20
+
+
 def solveTerm (nmax,V0):
 	#pQrS
 
@@ -142,10 +150,10 @@ def solveTerm (nmax,V0):
 	V4string = V34[0].string + V12[1].string[nAyZ:]
 	V3string = V34[1].string + V12[1].string[nAyZ:] 
 
-	print V1string
-	print V2string
-	print V3string
-	print V4string
+	#print V1string
+	#print V2string
+	#print V3string
+	#print V4string
 
 	# get all signs
 	#V1sign = V12[0].sign * V34[0].sign
@@ -189,7 +197,7 @@ def solveTerm (nmax,V0):
 				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[:nAyZ-1])
 				del allV[i].string[nAyZ-1]
 
-			print "H"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
+			#print "H"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
 	if "\hat{V}" in A : 
 		allV = [V1,V2,V3,V4] #we begin from these four
@@ -311,21 +319,9 @@ def solveTerm (nmax,V0):
 						expandedTerms.append (newTerm)	
 
 
-	print "Result for term1"
-	print "="
-	for i in expandedTerms :
-		print i.sign, i.scalar, i.chain
-	print "_"*20
 
 	# Sum all terms in the propagator matrix element
-	#print "summing"
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
-
-	#print "Result for term2"
-	#print "="
-	#for i in expandedTerms :
-	#	print i.sign, i.scalar, i.chain
-	#print "_"*20
 
 	if "\hat{H}" in A : 
 		#print "call to apply deltas!"
@@ -335,27 +331,14 @@ def solveTerm (nmax,V0):
 		#print "call to apply deltas!"
 		expandedTerms = applydeltas.applyDeltas (expandedTerms)
 
-	#print "Result for term3"
-	#print "="
-	#for i in expandedTerms :
-	#	print i.sign, i.scalar, i.chain
-	#print "_"*20
-
 
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	#if "\hat{V}" in A or "\hat{H}" in A: 
-	if "\hat{V}" in A : 
+	if "\hat{V}" in A or "\hat{H}" in A: 
+	#if "\hat{V}" in A : 
 		#print "call to apply deltas!"
 		expandedTerms = removeExcitations.removeExcitations(expandedTerms)
-
-	#print "Result for term4"
-	#print "="
-	#for i in expandedTerms :
-	#	print i.sign, i.scalar, i.chain
-	#print "_"*20
-
 
 	if "\hat{V}" in A : 
 		#print "call to apply deltas!"
@@ -365,12 +348,7 @@ def solveTerm (nmax,V0):
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-
-	print "Result for term5"
-	print "="
-	for i in expandedTerms :
-		print i.sign, i.scalar, i.chain
-	print "_"*20
+	basicPrinting ( expandedTerms, "5" ) 
 
 	return expandedTerms
 

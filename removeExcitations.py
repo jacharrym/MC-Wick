@@ -125,7 +125,6 @@ def removeExcitations (vector) :
 		auxVector[i].append([0])
 		auxVector[i].append([0])
 
-
 		for j in string1 :	
 			auxindex = index(j) 
 			kk = 0 
@@ -137,8 +136,8 @@ def removeExcitations (vector) :
 				if dagger( j) == 0:
 					auxVector[i][kk+1] = ["a_{"+auxindex+"i}","a_{"+auxindex+"a}"] 
 			else :
-
-				j =  transformToVacuumSpace ( j ) 
+				if not "delta" in j :
+					j =  transformToVacuumSpace ( j ) 
 				if auxVector[i][0] == [0] :	
 					auxVector[i][0] = [j]
 				else :
@@ -150,10 +149,15 @@ def removeExcitations (vector) :
 				for rr in auxVector[i][3]:	
 					for ss in auxVector[i][4]:	
 						newTerm = list()
+
+						oldDeltas = list()
+
 						auxoutputVector = list()
 						for ii in auxVector[i][0]:	
-							if not ii == 0 :
+							if not ii == 0 and not "delta" in ii :
 								newTerm.append(ii)
+							if not ii == 0 and "delta" in ii :
+								oldDeltas.append(ii)
 						if not pp == 0 :
 							newTerm.append(pp)
 						if not qq == 0 :
@@ -162,9 +166,15 @@ def removeExcitations (vector) :
 							newTerm.append(rr)
 						if not ss == 0 :
 							newTerm.append(ss)
+
 						if len(newTerm) > 0 :	
 							V0 = subOperators (+1,newTerm,"")
 							auxoutputVector = wick.wick (V0)
+							
+						# Here we add the previous kronecker deltas 
+						if len(oldDeltas) > 0 and len(newTerm) == 0:
+							auxoutputVector.append ( [operatorchain (+1,oldDeltas,"") ] )
+
 						if len(auxoutputVector) > 0 :	
 							outputVector.append( auxoutputVector )
 
@@ -185,11 +195,16 @@ def removeExcitations (vector) :
 									numberOfParticles = numberOfParticles - 1
 								if indexOfOperator in virtualIndexes :
 									numberOfParticles = numberOfParticles + 1
-
+							# We are in the fermi vaccum, there isn't annhilitation operators left
 							if dagger(operator) == 0:
 
 								print "It should never enter here"
 
+					# Here we add the previous kronecker deltas
+					if len(oldDeltas) > 0 and len(newTerm) > 0:
+						iterm.chain = oldDeltas + iterm.chain
+
+					# This is an excitation
 					if numberOfParticles == 0 and thereIsOperators :
 						sign1 = 0
 					sign1 = sign1 * iterm.sign
