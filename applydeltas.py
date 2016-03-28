@@ -90,8 +90,12 @@ def setIndex ( integral, vector, sign, exchange ) :
 	auxindexvector = list()
 	auxvector = list()
 	for operator in vector:
-		auxindexvector.append( index(operator) )
-		auxvector.append( dagger(operator) )
+		if "delta" in operator :
+			auxindexvector.append( index(operator) )
+			auxvector.append( "delta" )
+		else :
+			auxindexvector.append( index(operator) )
+			auxvector.append( dagger(operator) )
 
 	shift = 0
 	i = 0
@@ -117,6 +121,8 @@ def setIndex ( integral, vector, sign, exchange ) :
 		if auxvector[m] == 0 :
 			vector[m] = "b_{"+auxindexvector[m]+"}"
 
+		if auxvector[m] == "delta" :
+			vector[m] = "\delta_{"+auxindexvector[m]+"}"
 	if exchange :
 		i = integral[0]
 		j = integral[1]
@@ -195,7 +201,7 @@ def applyDeltas (vector) :
 				else :
 					if not indexDelta(j)[0][0] == indexDelta(j)[1][0]:
 						addDelta.append ("\delta_{"+indexDelta(j)[0]+","+indexDelta(j)[1]+"}")
-						sign1 = 0
+						#sign1 = 0
 			else: 
 				addDelta.append (j)
 				#addDelta = addDelta + j

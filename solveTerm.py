@@ -67,11 +67,27 @@ def superOperator ( H, v ) :
 	#Hv = subOperators (-1.0, H + v, "")
 	#vHHv = [vH,Hv]
 	## \hat{H} v = [H,v]_- = Hv - vH
-	vH = subOperators (-1.0, v + H, "")
-	Hv = subOperators (+1.0, H + v, "")
+	#Hv = subOperators (+1.0, H + v, "")
+	#vH = subOperators (-1.0, v + H, "")
+	## \hat{H} v = [v,H]_- = -Hv + vH
+	Hv = subOperators (-1.0, H + v, "")
+	vH = subOperators (+1.0, v + H, "")
 	HvvH = [Hv,vH]
 
 	return HvvH
+
+def adjoint ( chain ) :
+        outChain = list()
+
+	for i in chain :
+		if "dagger" in i :
+			ii = "a_{"+index(i)+"}"
+		else :
+			ii = "a_{"+index(i)+"}^{\dagger}"
+		outChain.append(ii)
+	outChain.reverse()
+	return outChain
+
 
 def calculateEpsilon ( vector ) :
 
@@ -102,6 +118,37 @@ def basicPrinting ( vector, n ) :
 		print i.sign, i.scalar, i.chain
 	print "_"*20
 
+def latexPrinting ( vector, n ) :
+
+	print "Result for term" + n
+	for i in vector : 
+		if i.sign > 0 :
+			print "+" + str(i.sign), 
+		else :
+			print i.sign,
+		if "||" in i.scalar or "|" in i.scalar:
+			print "\\langle", 
+			for k in i.scalar :
+				if len(k) == 1 :	
+					print k,
+				if len(k) == 2 and k.isalpha() :	
+					print k[0]+"_{"+k[1]+"}",
+				if len(k) == 2 and not k.isalpha() :	
+					print k,
+
+			print "\\rangle", 
+		else : 
+			print i.scalar,
+
+		if len(i.chain) > 0 :
+			print "(",
+			for j in i.chain :
+				print j,
+			print ")"
+	print "\n"+"_"*20
+
+
+
 
 def solveTerm (nmax,V0):
 	#pQrS
@@ -120,8 +167,11 @@ def solveTerm (nmax,V0):
 
 	# Set the initial element
 	wX = V0.string[0]
-	Xw = wX
+
+	#Xw = wX
 	#Xw.reverse()
+	
+	Xw = adjoint (wX)
 	
 	A = [V0.string[1][0]]
 	yZ = V0.string[1][1:]
@@ -133,8 +183,8 @@ def solveTerm (nmax,V0):
 	#print nXw,nAyZ
 
 	# expand the anticommutator and superoperator
+	V12 = commutator (Xw,AyZ)
 	#V12 = anticommutator (Xw,AyZ)
-	V12 = anticommutator (Xw,AyZ)
 	V34 = superOperator (A,yZ)
 
 	# get all chains of operators
@@ -320,12 +370,13 @@ def solveTerm (nmax,V0):
 
 
 
+
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
 	if "\hat{H}" in A : 
 		#print "call to apply deltas!"
-		expandedTerms = checkDeltas.checkDeltas (expandedTerms,	Xw, yZ)
+		expandedTerms = checkDeltas.checkDeltas (expandedTerms,	wX, yZ)
 
 	if "\hat{V}" in A : 
 		#print "call to apply deltas!"
@@ -348,7 +399,16 @@ def solveTerm (nmax,V0):
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	basicPrinting ( expandedTerms, "5" ) 
+	latexPrinting ( expandedTerms, "5" ) 
+
+
+	if "\hat{V}" in A : 
+		#print "call to apply deltas!"
+		expandedTerms = checkDeltas.checkDeltas (expandedTerms,	wX, yZ)
+
+
+	#basicPrinting ( expandedTerms, "5" ) 
+	latexPrinting ( expandedTerms, "6" ) 
 
 	return expandedTerms
 

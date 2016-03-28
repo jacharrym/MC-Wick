@@ -4,7 +4,7 @@ from sympy import symbols, Function, Dummy, latex
 from sympy.physics.secondquant import wicks, F, Fd, NO
 from pprint import pprint
 
-p,q,s,r,i,j,a = symbols("p,q,s,r,i,j,a")
+p,q,s,r,i,j,k,l,a,b,c,d = symbols("p,q,s,r,i,j,k,l,a,b,c,d")
 
 #result = wicks(Fd(j)*Fd(p)*Fd(q)*F(s)*F(r))
 #a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}
@@ -15,7 +15,8 @@ p,q,s,r,i,j,a = symbols("p,q,s,r,i,j,a")
 #result = wicks(Fd(p)*F(r)*Fd(j))
 #a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'
 
-result = wicks(Fd(j)*Fd(p)*F(r))
+result = wicks(F(c)*F(d)*Fd(b)*Fd(a))
+result = wicks(F(l)*Fd(p))
 #a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'
 
 
@@ -28,6 +29,7 @@ result = wicks(Fd(j)*Fd(p)*F(r))
 print result
 mystring = str(result)
 
+print "="
 printresult = True
 if printresult:
 	mystring = mystring.replace("+","w+")

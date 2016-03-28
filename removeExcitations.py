@@ -81,19 +81,19 @@ def transformToVacuumSpace ( operator ) :
 	auxIndex = index(operator)		
 	if lower(auxIndex) in occupiedIndexes :
 		if dagger(operator) == 1 :
-			auxOperator = "b_"+"{"+auxIndex+"}"
+			auxOperator = "a_"+"{"+auxIndex+"}"
 		elif dagger(operator) == 0 :
-			auxOperator = "b_"+"{"+auxIndex+"}^{\dagger}"
+			auxOperator = "a_"+"{"+auxIndex+"}^{\dagger}"
 	elif lower(auxIndex) in virtualIndexes :
 		if dagger(operator) == 1 :
-			auxOperator = "b_"+"{"+auxIndex+"}^{\dagger}"
+			auxOperator = "a_"+"{"+auxIndex+"}^{\dagger}"
 		elif dagger(operator) == 0 :
-			auxOperator = "b_"+"{"+auxIndex+"}"
+			auxOperator = "a_"+"{"+auxIndex+"}"
 	elif lower(auxIndex) in dummyIndexes :
 		if dagger(operator) == 1 :
-			auxOperator = "b_"+"{"+auxIndex+"}^{\dagger}"
+			auxOperator = "a_"+"{"+auxIndex+"}^{\dagger}"
 		elif dagger(operator) == 0 :
-			auxOperator = "b_"+"{"+auxIndex+"}"
+			auxOperator = "a_"+"{"+auxIndex+"}"
 
 	return auxOperator
 

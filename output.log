@@ -1,0 +1,190 @@
+i - j a k
+a_{i}^{\dagger} - a_{a}^{\dagger} a_{j} a_{k}
+V0 ['a_{i}^{\\dagger}', '\\hat{V}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}']
+1 4
+['a_{i}^{\\dagger}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', '\\hat{V}']
+['a_{i}^{\\dagger}', '\\hat{V}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}']
+['a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', '\\hat{V}', 'a_{i}^{\\dagger}']
+['\\hat{V}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{i}^{\\dagger}']
+1 ['a_{i}^{\\dagger}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}']
+2 ['a_{i}^{\\dagger}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{p}^{\\dagger}', 'a_{r}']
+3 ['a_{i}^{\\dagger}', 'a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}']
+4 ['a_{i}^{\\dagger}', 'a_{p}^{\\dagger}', 'a_{r}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}']
+5 ['a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}', 'a_{i}^{\\dagger}']
+6 ['a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{p}^{\\dagger}', 'a_{r}', 'a_{i}^{\\dagger}']
+7 ['a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{i}^{\\dagger}']
+8 ['a_{p}^{\\dagger}', 'a_{r}', 'a_{a}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{i}^{\\dagger}']
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{k}^{\\dagger}', 'a_{l}', 'a_{m}', 'a_{a}']
+Result for term5
+-1.0 \langle a p_{i} || k p_{i} \rangle ( \delta_{i,m} \delta_{j,l} )
++1.0 \langle a p_{i} || i p_{i} \rangle ( \delta_{k,m} \delta_{j,l} )
++1.0 \langle a p_{i} || k p_{i} \rangle ( \delta_{i,l} \delta_{j,m} )
+-1.0 \langle a p_{i} || i p_{i} \rangle ( \delta_{k,l} \delta_{j,m} )
+-1.0 \langle a p_{i} || j p_{i} \rangle ( \delta_{k,m} \delta_{i,l} )
++1.0 \langle a p_{i} || j p_{i} \rangle ( \delta_{k,l} \delta_{i,m} )
+
+____________________
+Result for term6
+
+____________________
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{k}^{\\dagger}', 'a_{l}', 'a_{a}', 'a_{m}']
+Result for term5
++1.0 \langle a p_{i} || k p_{i} \rangle ( \delta_{i,m} \delta_{j,l} )
+-1.0 \langle a p_{i} || i p_{i} \rangle ( \delta_{k,m} \delta_{j,l} )
+-1.0 \langle a p_{i} || k p_{i} \rangle ( \delta_{i,l} \delta_{j,m} )
++1.0 \langle a p_{i} || i p_{i} \rangle ( \delta_{k,l} \delta_{j,m} )
++1.0 \langle a p_{i} || j p_{i} \rangle ( \delta_{k,m} \delta_{i,l} )
+-1.0 \langle a p_{i} || j p_{i} \rangle ( \delta_{k,l} \delta_{i,m} )
+
+____________________
+Result for term6
+
+____________________
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{k}^{\\dagger}', 'a_{a}', 'a_{l}', 'a_{m}']
+Result for term5
+-1.0 \langle a p_{i} || k p_{i} \rangle ( \delta_{i,m} \delta_{j,l} )
++1.0 \langle a p_{i} || i p_{i} \rangle ( \delta_{k,m} \delta_{j,l} )
++1.0 \langle a p_{i} || k p_{i} \rangle ( \delta_{i,l} \delta_{j,m} )
+-1.0 \langle a p_{i} || i p_{i} \rangle ( \delta_{k,l} \delta_{j,m} )
+-1.0 \langle a p_{i} || j p_{i} \rangle ( \delta_{k,m} \delta_{i,l} )
++1.0 \langle a p_{i} || j p_{i} \rangle ( \delta_{k,l} \delta_{i,m} )
+
+____________________
+Result for term6
+
+____________________
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{k}^{\\dagger}', 'a_{a}', 'a_{b}', 'a_{c}']
+Result for term5
+
+____________________
+Result for term6
+
+____________________
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{a}^{\\dagger}', 'a_{k}', 'a_{l}', 'a_{m}']
+Result for term5
++1.0 \langle m p_{i} || a p_{i} \rangle ( \delta_{i,l} \delta_{j,k} )
+-1.0 \langle l p_{i} || a p_{i} \rangle ( \delta_{i,m} \delta_{j,k} )
+-1.0 \langle m p_{i} || a p_{i} \rangle ( \delta_{i,k} \delta_{j,l} )
++1.0 \langle k p_{i} || a p_{i} \rangle ( \delta_{i,m} \delta_{j,l} )
++1.0 \langle l p_{i} || a p_{i} \rangle ( \delta_{i,k} \delta_{j,m} )
+-1.0 \langle k p_{i} || a p_{i} \rangle ( \delta_{i,l} \delta_{j,m} )
+-1.0 \langle l m || a j \rangle ( \delta_{i,k} )
++1.0 \langle k m || a j \rangle ( \delta_{i,l} )
+-1.0 \langle k l || a j \rangle ( \delta_{i,m} )
++1.0 \langle l m || a i \rangle ( \delta_{j,k} )
+-1.0 \langle k m || a i \rangle ( \delta_{j,l} )
++1.0 \langle k l || a i \rangle ( \delta_{j,m} )
+
+____________________
+Result for term6
++1.0 \langle l m || a i \rangle ( \delta_{j,k} )
+
+____________________
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{a}^{\\dagger}', 'a_{k}', 'a_{b}', 'a_{c}']
+Result for term5
+
+____________________
+Result for term6
+
+____________________
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{a}^{\\dagger}', 'a_{b}', 'a_{k}', 'a_{c}']
+Result for term5
+
+____________________
+Result for term6
+
+____________________
+['a_{j}^{\\dagger}', 'a_{i}^{\\dagger}'] ['\\hat{V}'] ['a_{a}^{\\dagger}', 'a_{b}', 'a_{c}', 'a_{k}']
+Result for term5
+
+____________________
+Result for term6
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{i}^{\\dagger}', 'a_{j}', 'a_{k}', 'a_{c}']
+Result for term5
+-1.0 \langle j p_{i} || b p_{i} \rangle ( \delta_{a,c} \delta_{i,k} )
++1.0 \langle j p_{i} || a p_{i} \rangle ( \delta_{b,c} \delta_{i,k} )
++1.0 \langle k p_{i} || b p_{i} \rangle ( \delta_{a,c} \delta_{i,j} )
+-1.0 \langle k p_{i} || a p_{i} \rangle ( \delta_{b,c} \delta_{i,j} )
+
+____________________
+Result for term6
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{i}^{\\dagger}', 'a_{j}', 'a_{c}', 'a_{k}']
+Result for term5
++1.0 \langle j p_{i} || b p_{i} \rangle ( \delta_{a,c} \delta_{i,k} )
+-1.0 \langle j p_{i} || a p_{i} \rangle ( \delta_{b,c} \delta_{i,k} )
+-1.0 \langle k p_{i} || b p_{i} \rangle ( \delta_{a,c} \delta_{i,j} )
++1.0 \langle k p_{i} || a p_{i} \rangle ( \delta_{b,c} \delta_{i,j} )
+
+____________________
+Result for term6
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{i}^{\\dagger}', 'a_{c}', 'a_{j}', 'a_{k}']
+Result for term5
+-1.0 \langle j p_{i} || b p_{i} \rangle ( \delta_{a,c} \delta_{i,k} )
++1.0 \langle j p_{i} || a p_{i} \rangle ( \delta_{b,c} \delta_{i,k} )
++1.0 \langle k p_{i} || b p_{i} \rangle ( \delta_{a,c} \delta_{i,j} )
+-1.0 \langle k p_{i} || a p_{i} \rangle ( \delta_{b,c} \delta_{i,j} )
+
+____________________
+Result for term6
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{i}^{\\dagger}', 'a_{c}', 'a_{d}', 'a_{e}']
+Result for term5
++1.0 \langle c p_{i} || i p_{i} \rangle ( \delta_{a,e} \delta_{b,d} )
+-1.0 \langle c p_{i} || i p_{i} \rangle ( \delta_{b,e} \delta_{a,d} )
+-1.0 \langle d p_{i} || i p_{i} \rangle ( \delta_{a,e} \delta_{b,c} )
++1.0 \langle e p_{i} || i p_{i} \rangle ( \delta_{a,d} \delta_{b,c} )
++1.0 \langle d p_{i} || i p_{i} \rangle ( \delta_{b,e} \delta_{a,c} )
+-1.0 \langle e p_{i} || i p_{i} \rangle ( \delta_{b,d} \delta_{a,c} )
++1.0 \langle c d || a i \rangle ( \delta_{b,e} )
+-1.0 \langle c d || b i \rangle ( \delta_{a,e} )
+-1.0 \langle c e || a i \rangle ( \delta_{b,d} )
++1.0 \langle c e || b i \rangle ( \delta_{a,d} )
++1.0 \langle d e || a i \rangle ( \delta_{b,c} )
+-1.0 \langle d e || b i \rangle ( \delta_{a,c} )
+
+____________________
+Result for term6
++1.0 \langle d e || a i \rangle ( \delta_{b,c} )
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{c}^{\\dagger}', 'a_{i}', 'a_{j}', 'a_{k}']
+Result for term5
+
+____________________
+Result for term6
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{c}^{\\dagger}', 'a_{i}', 'a_{d}', 'a_{e}']
+Result for term5
+-1.0 \langle i p_{i} || c p_{i} \rangle ( \delta_{a,e} \delta_{b,d} )
++1.0 \langle i p_{i} || c p_{i} \rangle ( \delta_{b,e} \delta_{a,d} )
+
+____________________
+Result for term6
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{c}^{\\dagger}', 'a_{d}', 'a_{i}', 'a_{e}']
+Result for term5
++1.0 \langle i p_{i} || c p_{i} \rangle ( \delta_{a,e} \delta_{b,d} )
+-1.0 \langle i p_{i} || c p_{i} \rangle ( \delta_{b,e} \delta_{a,d} )
+
+____________________
+Result for term6
+
+____________________
+['a_{b}^{\\dagger}', 'a_{a}^{\\dagger}'] ['\\hat{V}'] ['a_{c}^{\\dagger}', 'a_{d}', 'a_{e}', 'a_{i}']
+Result for term5
+-1.0 \langle i p_{i} || c p_{i} \rangle ( \delta_{a,e} \delta_{b,d} )
++1.0 \langle i p_{i} || c p_{i} \rangle ( \delta_{b,e} \delta_{a,d} )
+
+____________________
+Result for term6
+
+____________________

@@ -558,14 +558,14 @@ def wick (Vi) :
 #V0 = subOperators(-0.25, ['a_{i}^{\dagger}', 'a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
 #V0 = subOperators(0.25, ['a_{i}^{\\dagger}', 'a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'],"")
 
-V0 = subOperators(-0.25, ['a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
+#V0 = subOperators(-0.25, ['a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
 #V0 = subOperators(0.25, ['a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'],"")
 #
 #V0 = subOperators(1.0, ['a_{j}', 'a_{p}^{\dagger}', 'a_{r}'],"")
 #V0 = subOperators(-1.0, ['a_{p}^{\dagger}', 'a_{r}', 'a_{j}'],"")
 
 
-wick (V0)
+#wick (V0)
 #V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
 #wick (V0)
 
