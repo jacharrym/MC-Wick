@@ -145,7 +145,7 @@ def latexPrinting ( vector, n ) :
 			for j in i.chain :
 				print j,
 			print ")"
-	print "\n"+"_"*20
+	print "_"*20
 
 
 
