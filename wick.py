@@ -16,21 +16,34 @@ typeOfCombination = {
 global fermions
 global bosons
 global printZeroValues 
+
 global occupiedIndexes 
-global dummyIndexes 
 global virtualIndexes 
+global dummyIndexes 
+
+global occupiedIndexesA
+global virtualIndexesA
+global dummyIndexesA
+
 global occupiedIndexesB 
 global virtualIndexesB 
+global dummyIndexesB
 
 fermions = True
 bosons = False
 printZeroValues = False
 occupiedIndexes = ("i","j","k","l","m","n","o","pi","qi","ri","si")
+virtualIndexes = ("a","b","c","d","e","f","g","h","pa","qa","ra","sa")
 dummyIndexes = ("p","q","r","s")
 #dummyIndexes = ()
-virtualIndexes = ("a","b","c","d","e","f","g","h","pa","qa","ra","sa")
+
+occupiedIndexesA = ("i","j","k","l","m","n","o","pi","qi","ri","si")
+virtualIndexesA = ("a","b","c","d","e","f","g","h","pa","qa","ra","sa")
+dummyIndexesA = ("p","q","r","s")
+
 occupiedIndexesB = ("I","J","K","L","M","N","O","P","Q","R","S")
 virtualIndexesB = ("A","B","C","D","E","F","G","H")
+dummyIndexesB = ("P","Q","R","S")
 
 
 ## subOperators
@@ -52,17 +65,17 @@ def transformToFermiSpace ( vector ) :
 	auxVector = list()
 	for i in range(0,len(vector)) :
 		auxIndex = index(vector[i])		
-		if lower(auxIndex) in occupiedIndexes :
+		if auxIndex in occupiedIndexes :
 			if dagger(vector[i]) == 1 :
 				auxVector.append ("b_"+"{"+auxIndex+"}")
 			elif dagger(vector[i]) == 0 :
 				auxVector.append ("b_"+"{"+auxIndex+"}^{\dagger}")
-		elif lower(auxIndex) in virtualIndexes :
+		elif auxIndex in virtualIndexes :
 			if dagger(vector[i]) == 1 :
 				auxVector.append ("b_"+"{"+auxIndex+"}^{\dagger}")
 			elif dagger(vector[i]) == 0 :
 				auxVector.append ("b_"+"{"+auxIndex+"}")
-		elif lower(auxIndex) in dummyIndexes :
+		elif auxIndex in dummyIndexes :
 			if dagger(vector[i]) == 1 :
 				auxVector.append ("b_"+"{"+auxIndex+"}^{\dagger}")
 			elif dagger(vector[i]) == 0 :
@@ -425,11 +438,12 @@ def generateCombinations ( matrixOfCombinations, ncombination, ntype, vector, ou
 
 
 
-def wick (Vi) :
+def wick_solve (Vi) :
 
 
 	##print "== Initial"
 	#print "\t",Vi.sign, longformat(Vi.string)
+	print "occc in wick", occupiedIndexes
 
 	##print "== Fermi vacuum"
 	#Vi.string = transformToFermiSpace ( Vi.string )
@@ -544,13 +558,91 @@ def wick (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	#print "Wick, Sum terms"
-	#for i in range(0,len(auxMatrixOfCombinations)):
-	#	for j in range(0, len(auxMatrixOfCombinations[i])):
-	#		print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
+	print "Wick, Sum terms"
+	for i in range(0,len(auxMatrixOfCombinations)):
+		for j in range(0, len(auxMatrixOfCombinations[i])):
+			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 
 	return auxMatrixOfCombinations
+
+def multiplyVectors ( Va, Vb ) :
+
+	print "mult"
+
+	VaVb = list () # a vector
+	VaVb.append( list() ) # a matrix 1xn
+
+	for ai in range(0,len(Va)):
+		for aj in range(0, len(Va[ai])):
+
+			for bi in range(0,len(Vb)):
+				for bj in range(0, len(Vb[bi])):
+					newSign = Va[ai][aj].sign * Vb[bi][bj].sign
+					newChain = Va[ai][aj].chain + Vb[bi][bj].chain # it is a multiplication of strings (sum)
+					newAB = operatorchain( newSign, newChain, Va[ai][aj].scalar) # the scalar should be the same
+					print newAB.sign,newAB.chain, newAB.scalar
+					VaVb[0].append(newAB) # All the terms are gathered in matrix of 1xn
+
+	return VaVb
+
+
+def wick (Vi) :
+
+	# The global keyword tells the interpreter to use the global variable inside this function instead of creating a new. 
+	global occupiedIndexes 
+	global virtualIndexes 
+	global dummyIndexes 
+	##print "== Initial"
+
+	auxStringAlpha = list()
+	auxStringBeta = list()
+
+	# Split in alpha and beta species
+	for operator in Vi.string:
+
+		auxindex = index(operator)
+		if auxindex in occupiedIndexesA or auxindex in virtualIndexesA :
+			auxStringAlpha.append(operator)
+		if auxindex in occupiedIndexesB or auxindex in virtualIndexesB :
+			auxStringBeta.append(operator)	
+
+        # One species
+	if len(auxStringAlpha) > 0 and len(auxStringBeta) ==0 :
+
+		print "one species wick"
+		matrixOfCombinations = wick_solve (Vi)
+	if len(auxStringBeta) == 0 and len(auxStringBeta) > 0:
+
+		print "one species wick"
+		matrixOfCombinations = wick_solve (Vi)
+
+        # Two species
+	if len(auxStringBeta) > 0 and len(auxStringBeta) > 0:
+
+		print "two species wick"
+
+			
+		ViAlpha = subOperators (Vi.sign,auxStringAlpha,Vi.scalar)
+		ViBeta = subOperators (Vi.sign,auxStringBeta,Vi.scalar)
+		print "AA",ViAlpha.string
+		print "BB",ViBeta.string
+
+		occupiedIndexes = occupiedIndexesA
+		virtualIndexes = virtualIndexesA 
+		dummyIndexes = dummyIndexesA
+
+		matrixOfCombinationsA = wick_solve (ViAlpha)
+
+		occupiedIndexes = occupiedIndexesB
+		virtualIndexes = virtualIndexesB
+		dummyIndexes = dummyIndexesB
+
+		matrixOfCombinationsB = wick_solve (ViBeta)
+
+		matrixOfCombinations = multiplyVectors ( matrixOfCombinationsA, matrixOfCombinationsB )
+
+	return matrixOfCombinations
 
 
 ################################################

@@ -247,7 +247,7 @@ def solveTerm (nmax,V0):
 				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[:nAyZ-1])
 				del allV[i].string[nAyZ-1]
 
-			#print "H"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
+			print "H"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
 	if "\hat{V}" in A : 
 		allV = [V1,V2,V3,V4] #we begin from these four
@@ -373,6 +373,8 @@ def solveTerm (nmax,V0):
 
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
+
+	latexPrinting ( expandedTerms, "1" ) 
 
 	if "\hat{H}" in A : 
 		#print "call to apply deltas!"
