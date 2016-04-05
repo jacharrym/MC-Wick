@@ -85,7 +85,9 @@ def symbolOfSign (sign) :
 	elif sign == -1.0:
 		return "-"
 def setIndex ( integral, vector, sign, exchange ) :
-	dummyIndex = ("p","q","r","s")	
+
+	dummyIndexA = ("p","q","r","s")	
+	dummyIndexB = ("P","Q","R","S")	
 
 	auxindexvector = list()
 	auxvector = list()
@@ -100,20 +102,39 @@ def setIndex ( integral, vector, sign, exchange ) :
 	shift = 0
 	i = 0
 
-	for indexi in dummyIndex:
+	for indexi in dummyIndexA:
 		#print indexi, integral
 		matching = [s for s in integral if indexi in s]
 		if matching :
 			#print integral
 	
 			for u in range(0,len(integral)) :
-				integral[u] = integral[u].replace(dummyIndex[i],dummyIndex[i-shift])
+				integral[u] = integral[u].replace(dummyIndexA[i],dummyIndexA[i-shift])
 			#print integral
-			auxindexvector = [operator.replace(dummyIndex[i], dummyIndex[i-shift]) for operator in auxindexvector]
+			auxindexvector = [operator.replace(dummyIndexA[i], dummyIndexA[i-shift]) for operator in auxindexvector]
 
 		else :
 			shift = shift + 1
 		i = i + 1
+
+	shift = 0
+	i = 0
+
+	for indexi in dummyIndexB:
+		#print indexi, integral
+		matching = [s for s in integral if indexi in s]
+		if matching :
+			#print integral
+	
+			for u in range(0,len(integral)) :
+				integral[u] = integral[u].replace(dummyIndexB[i],dummyIndexB[i-shift])
+			#print integral
+			auxindexvector = [operator.replace(dummyIndexB[i], dummyIndexB[i-shift]) for operator in auxindexvector]
+
+		else :
+			shift = shift + 1
+		i = i + 1
+
 
 	for m in range(0,len(auxvector)) :
 		if auxvector[m] == 1 :
@@ -155,6 +176,23 @@ def setIndex ( integral, vector, sign, exchange ) :
 			kl = [k,l]
 
 		integral = ij + ["||"] + kl
+
+	else :
+		i = integral[0]
+		j = integral[1]
+		k = integral[2]
+		l = integral[3]
+
+		ii = order[lower(i)[0]]	
+		jj = order[lower(j)[0]]
+		kk = order[lower(k)[0]]
+		ll = order[lower(l)[0]]
+
+		ij = [i,j]
+		kl = [k,l]
+
+		integral = ij + ["|"] + kl
+
 	return integral, vector, sign, exchange	
 
 def applyDeltas (vector) :
@@ -162,46 +200,84 @@ def applyDeltas (vector) :
 	includeExchange = False
 	auxVector = list()
 
+	dummyIndexesA = ("p","q","r","s")
+	dummyIndexesB = ("P","Q","R","S")
+	dummyIndexes = dummyIndexesA + dummyIndexesB
+
 	for i in range(0,len(vector)) :
-		line1 = vector[i]
+		line1 = copy.deepcopy(vector[i])
 		sign1 = line1.sign
+
 
 		if "||" in line1.scalar :
 			integral = line1.scalar
 			#integral = integral.split(",")
 			del integral[integral.index("||")]
 			includeExchange = True
-		else :
+		elif "|" in line1.scalar : ##?
 
 			integral = line1.scalar
 			#integral = integral.split(",")
 			del integral[integral.index("|")]
 			includeExchange = False
+		else : 
+			integral = line1.scalar
 
 		auxLine1 = line1.chain # Split the deltas
 		auxIntegral = integral
 
 		addDelta = list()
+		#print i,line1.scalar,auxIntegral,integral
 		for j in auxLine1 :	
 			if "delta" in j :
-				if ( indexDelta(j)[0][0] in auxIntegral ) : 
-					for u in range(0,len(auxIntegral)) :		
-						if not indexDelta(j)[0][0] == indexDelta(j)[1][0]:
-							auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[1][0], indexDelta(j)[1] ) 
-						auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[0][0], indexDelta(j)[1] ) 
+				#print "delta", j, indexDelta(j)
+				auxindex = indexDelta(j)
 
+				# Just the dummy indexes
+				if ( auxindex[0][0] in auxIntegral and auxindex[1][0] in auxIntegral ) : 
+
+					for u in range(0,len(auxIntegral)) :		
+
+						# delta_{pi,qi} => qi -> pi
+						if auxindex[1][0] in dummyIndexes and  auxindex[1][0] == auxIntegral[u]:
+							auxIntegral[u] = auxIntegral[u].replace( auxindex[1][0], auxindex[0] ) 
+
+						# delta_{pi,qi} => p -> pi, restric the dummy index
+						if auxindex[0][0] in dummyIndexes and not auxindex[0] == auxIntegral[u]:
+
+							auxIntegral[u] = auxIntegral[u].replace( auxindex[0][0], auxindex[0] ) 
+
+						# delta_{p,pi} => p -> pi
+						if auxindex[0][0] ==  auxindex[1][0] :
+
+							auxIntegral[u] = auxIntegral[u].replace( auxindex[0], auxindex[1] ) 
+						#if auxindex[0][0] in dummyIndexes and len(auxindex[0]) > 1:
+						#	print "12",auxIntegral[u]
+						#	auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[0][0], indexDelta(j)[0] ) 
+
+
+				# Any delta_{x,p}
 				elif ( indexDelta(j)[1][0] in auxIntegral ) : 
 					for u in range(0,len(auxIntegral)) :		
 
+						#print auxIntegral[u]
 						if not indexDelta(j)[1][0] == indexDelta(j)[0][0]:
-							auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[0][0], indexDelta(j)[0] ) 
 
-						auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[1][0], indexDelta(j)[0] ) 
+							auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[1][0], indexDelta(j)[0] ) 
+							#print "i",auxIntegral[u]
 
+						# delta_{x,p} => p -> x
+						else :
+							auxIntegral[u] = auxIntegral[u].replace( indexDelta(j)[1][0], indexDelta(j)[0] ) 
+							#print "e",auxIntegral[u]
+
+						#print auxIntegral[u]
+				# Any delta_{x,y} 
 				else :
 					if not indexDelta(j)[0][0] == indexDelta(j)[1][0]:
 						addDelta.append ("\delta_{"+indexDelta(j)[0]+","+indexDelta(j)[1]+"}")
 						#sign1 = 0
+				#print auxIntegral
 			else: 
 				addDelta.append (j)
 				#addDelta = addDelta + j

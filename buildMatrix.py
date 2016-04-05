@@ -63,6 +63,8 @@ def checkNumberOfParticles ( vector ) :
 
 selectedMatrix = "xXHxX"
 
+selectedMatrix = "xHXyZ"
+
 twoParticles = False
 oneParticle = False
 
@@ -377,6 +379,46 @@ if selectedMatrix == "xXHxX":
 						finalTerms = solveTerm.solveTerm (nmax,V0)
 
 #			print ""
+
+if selectedMatrix == "xHXyZ":
+	nmax = 1
+	alphaSpecies = ("h","p")
+	betaSpecies = ("H","P") 
+	twoParticles = True
+
+	for i in alphaSpecies: 
+		for j in betaSpecies: 
+			for k in alphaSpecies: 
+				for l in betaSpecies: 
+					nOccup = 0
+					nVirtual = 0
+					if abs(checkNumberOfParticles( [i] ))==1 and \
+						abs(checkNumberOfParticles( [k] ))==1 :
+
+						indexi, nOccup, nVirtual = getIndexForParticleHole(i,nOccup,nVirtual)
+						indexj, nOccup, nVirtual = getIndexForParticleHole(j,nOccup,nVirtual)
+						indexk, nOccup, nVirtual = getIndexForParticleHole(k,nOccup,nVirtual)
+						indexl, nOccup, nVirtual = getIndexForParticleHole(l,nOccup,nVirtual)
+
+						indexi = "a_{"+indexi+"}"
+						indexj = "a_{"+indexj+"}^{\dagger}"
+						indexk = "a_{"+indexk+"}"
+						indexl = "a_{"+indexl+"}"
+
+						#superOperator = "\hat{H}"
+						superOperator = "\hat{V}"
+
+						#if (i+j+k+l) == "hHhP" :
+						#if (i+j+k+l) == "pPpH" :
+
+						print "\\bf \hat{V}_{"+i+"-"+j+k+l+"} &",
+						print "("+indexi+"|"+superOperator+indexj+indexk+indexl+")"
+
+						#solves the term
+						V0 = subOperators (+1,[[indexi],[superOperator,indexj,indexk,indexl ]], "" )
+						finalTerms = solveTerm.solveTerm (nmax,V0)
+
+#
 
 
 

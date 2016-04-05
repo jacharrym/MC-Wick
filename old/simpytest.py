@@ -15,8 +15,11 @@ p,q,s,r,i,j,k,l,a,b,c,d = symbols("p,q,s,r,i,j,k,l,a,b,c,d")
 #result = wicks(Fd(p)*F(r)*Fd(j))
 #a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'
 
-result = wicks(F(c)*F(d)*Fd(b)*Fd(a))
-result = wicks(F(l)*Fd(p))
+#'a_{i}^{\\dagger}', 'a_{k}', 'a_{p}^{\\dagger}', 'a_{q}
+
+#result = wicks(Fd(i)*F(k)*Fd(p)*F(q))
+#'a_{J}^{\\dagger}', 'a_{A}', 'a_{P}^{\\dagger}', 'a_{Q}'
+result = wicks(Fd(j)*F(a)*Fd(p)*F(q))
 #a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'
 
 
@@ -40,7 +43,7 @@ if printresult:
 	for element in mystring:
 		m  = m +1
 		#if not "AnnihilateFermion(j)" in element:
-		if not "CreateFermion(i)" in element:
+#		if not "CreateFermion(i)" in element:
 	
-			print element
+		print element
 

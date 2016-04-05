@@ -41,8 +41,8 @@ occupiedIndexesA = ("i","j","k","l","m","n","o","pi","qi","ri","si")
 virtualIndexesA = ("a","b","c","d","e","f","g","h","pa","qa","ra","sa")
 dummyIndexesA = ("p","q","r","s")
 
-occupiedIndexesB = ("I","J","K","L","M","N","O","P","Q","R","S")
-virtualIndexesB = ("A","B","C","D","E","F","G","H")
+occupiedIndexesB = ("I","J","K","L","M","N","O","Pi","Qi","Ri","Si")
+virtualIndexesB = ("A","B","C","D","E","F","G","H","Pa","Qa","Ra","Sa")
 dummyIndexesB = ("P","Q","R","S")
 
 
@@ -443,11 +443,7 @@ def wick_solve (Vi) :
 
 	##print "== Initial"
 	#print "\t",Vi.sign, longformat(Vi.string)
-	print "occc in wick", occupiedIndexes
-
-	##print "== Fermi vacuum"
-	#Vi.string = transformToFermiSpace ( Vi.string )
-	#print "\t",longformat(Vi.string)
+	#print "occc in wick", occupiedIndexes
 
 	## Zero 
 	#sign = Vi.sign
@@ -469,18 +465,18 @@ def wick_solve (Vi) :
 	matrixOfCombinations, auxint, auxint, outputVector, outputValue = generateCombinations ( \
 		matrixOfCombinations, totalCombinations, 0, Vi.string, operatorchain (1,"",""))
 
-	#print "wick"
-	#for i in range(0,len(matrixOfCombinations)):
-	#	for j in range(0, len(matrixOfCombinations[i])):
-	#		print i,j,matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
+#	print "wick"
+#	for i in range(0,len(matrixOfCombinations)):
+#		for j in range(0, len(matrixOfCombinations[i])):
+#			print i,j,matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
 
 
 	## Save the sign and "scalar"
-	for i in range(0, totalCombinations+1):
-		for j in range(0,len(matrixOfCombinations[i])):
-			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
-			#print "sign", matrixOfCombinations[i][j].sign 
-			matrixOfCombinations[i][j].scalar = scalar
+#	for i in range(0, totalCombinations+1):
+#		for j in range(0,len(matrixOfCombinations[i])):
+#			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
+#			#print "sign", matrixOfCombinations[i][j].sign 
+#			matrixOfCombinations[i][j].scalar = scalar
 
 	## Transform to Fermi Vacuum and apply normar order
 	for i in range(0, totalCombinations+1):
@@ -558,20 +554,24 @@ def wick_solve (Vi) :
 	for i in range(0,len(auxMatrixOfCombinations)):
 		auxMatrixOfCombinations[i] = removeDeltas.removeDeltas ( auxMatrixOfCombinations[i], repeated ) 
 
-	print "Wick, Sum terms"
-	for i in range(0,len(auxMatrixOfCombinations)):
-		for j in range(0, len(auxMatrixOfCombinations[i])):
-			print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
-
+	#print "Wick, Sum terms"
+	#for i in range(0,len(auxMatrixOfCombinations)):
+	#	for j in range(0, len(auxMatrixOfCombinations[i])):
+	#		print  auxMatrixOfCombinations[i][j].sign, auxMatrixOfCombinations[i][j].chain
 
 	return auxMatrixOfCombinations
 
 def multiplyVectors ( Va, Vb ) :
 
-	print "mult"
-
 	VaVb = list () # a vector
 	VaVb.append( list() ) # a matrix 1xn
+
+	#for ai in range(0,len(Va)):
+	#	for aj in range(0, len(Va[ai])):
+	#		print Va[ai][aj].chain
+	#for bi in range(0,len(Vb)):
+	#	for bj in range(0, len(Vb[bi])):
+	#		print Vb[bi][bj].chain
 
 	for ai in range(0,len(Va)):
 		for aj in range(0, len(Va[ai])):
@@ -581,7 +581,7 @@ def multiplyVectors ( Va, Vb ) :
 					newSign = Va[ai][aj].sign * Vb[bi][bj].sign
 					newChain = Va[ai][aj].chain + Vb[bi][bj].chain # it is a multiplication of strings (sum)
 					newAB = operatorchain( newSign, newChain, Va[ai][aj].scalar) # the scalar should be the same
-					print newAB.sign,newAB.chain, newAB.scalar
+
 					VaVb[0].append(newAB) # All the terms are gathered in matrix of 1xn
 
 	return VaVb
@@ -593,55 +593,70 @@ def wick (Vi) :
 	global occupiedIndexes 
 	global virtualIndexes 
 	global dummyIndexes 
-	##print "== Initial"
 
 	auxStringAlpha = list()
 	auxStringBeta = list()
+	#print "V0", Vi.string
 
 	# Split in alpha and beta species
 	for operator in Vi.string:
 
 		auxindex = index(operator)
-		if auxindex in occupiedIndexesA or auxindex in virtualIndexesA :
+		if auxindex in occupiedIndexesA or auxindex in virtualIndexesA or auxindex in dummyIndexesA :
 			auxStringAlpha.append(operator)
-		if auxindex in occupiedIndexesB or auxindex in virtualIndexesB :
+		if auxindex in occupiedIndexesB or auxindex in virtualIndexesB or auxindex in dummyIndexesB :
 			auxStringBeta.append(operator)	
 
+	#print "A",auxStringAlpha,len(auxStringAlpha)
+	#print "B",auxStringBeta,len(auxStringBeta)
         # One species
 	if len(auxStringAlpha) > 0 and len(auxStringBeta) ==0 :
-
-		print "one species wick"
-		matrixOfCombinations = wick_solve (Vi)
-	if len(auxStringBeta) == 0 and len(auxStringBeta) > 0:
-
-		print "one species wick"
-		matrixOfCombinations = wick_solve (Vi)
-
-        # Two species
-	if len(auxStringBeta) > 0 and len(auxStringBeta) > 0:
-
-		print "two species wick"
-
-			
-		ViAlpha = subOperators (Vi.sign,auxStringAlpha,Vi.scalar)
-		ViBeta = subOperators (Vi.sign,auxStringBeta,Vi.scalar)
-		print "AA",ViAlpha.string
-		print "BB",ViBeta.string
 
 		occupiedIndexes = occupiedIndexesA
 		virtualIndexes = virtualIndexesA 
 		dummyIndexes = dummyIndexesA
 
+		matrixOfCombinations = wick_solve (Vi)
+
+	if len(auxStringAlpha) == 0 and len(auxStringBeta) > 0:
+
+		occupiedIndexes = occupiedIndexesB
+		virtualIndexes = virtualIndexesB
+		dummyIndexes = dummyIndexesB
+
+		matrixOfCombinations = wick_solve (Vi)
+
+        # Two species
+	if len(auxStringAlpha) > 0 and len(auxStringBeta) > 0:
+
+		ViAlpha = subOperators (Vi.sign,auxStringAlpha,Vi.scalar)
+		ViBeta = subOperators (Vi.sign,auxStringBeta,Vi.scalar)
+
+		occupiedIndexes = occupiedIndexesA
+		virtualIndexes = virtualIndexesA 
+		dummyIndexes = dummyIndexesA
+
+		# Solve alpha
 		matrixOfCombinationsA = wick_solve (ViAlpha)
 
 		occupiedIndexes = occupiedIndexesB
 		virtualIndexes = virtualIndexesB
 		dummyIndexes = dummyIndexesB
 
+		# Solve beta
 		matrixOfCombinationsB = wick_solve (ViBeta)
 
+		# Multiply :AB..: * :ab...:
 		matrixOfCombinations = multiplyVectors ( matrixOfCombinationsA, matrixOfCombinationsB )
+	#print "mult end"
+	# Now we save the sign and scalar
+	for i in range(0,len(matrixOfCombinations)):
+		for j in range(0, len(matrixOfCombinations[i])):
 
+			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
+			matrixOfCombinations[i][j].scalar = Vi.scalar
+
+	#		print  matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
 	return matrixOfCombinations
 
 
@@ -657,7 +672,8 @@ def wick (Vi) :
 #V0 = subOperators(-1.0, ['a_{p}^{\dagger}', 'a_{r}', 'a_{j}'],"")
 
 
-#wick (V0)
+V0 = subOperators(-1.0, ['a_{r}', 'a_{s}','a_{p}^{\dagger}', 'a_{q}^{\dagger}'],"")
+wick (V0)
 #V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
 #wick (V0)
 

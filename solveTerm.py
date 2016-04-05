@@ -145,6 +145,8 @@ def latexPrinting ( vector, n ) :
 			for j in i.chain :
 				print j,
 			print ")"
+		else :
+			print ""
 	print "_"*20
 
 
@@ -183,8 +185,8 @@ def solveTerm (nmax,V0):
 	#print nXw,nAyZ
 
 	# expand the anticommutator and superoperator
-	V12 = commutator (Xw,AyZ)
-	#V12 = anticommutator (Xw,AyZ)
+	#V12 = commutator (Xw,AyZ)
+	V12 = anticommutator (Xw,AyZ)
 	V34 = superOperator (A,yZ)
 
 	# get all chains of operators
@@ -255,10 +257,33 @@ def solveTerm (nmax,V0):
 	# Express perturbation operator
 	if "\hat{V}" in A : 
 
-		integralA = ["p","q","||","r","s"]
-		integralB = ["p","qi","||","r","qi"]
-		auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
-		auxV12 = ["a_{p}^{\dagger}", "a_{r}"]
+		# intra
+		#integralA = ["p","q","|","r","s"]
+		#integralB = ["p","q","|","r","q"]
+
+		# a-b
+		#integralA = ["p","P","|","q","Q"]
+		#integralB = ["p","Pi","|","q","Pi"]
+
+		# b-a
+		integralA = ["P","p","|","Q","q"]
+		integralB = ["P","pi","|","Q","pi"]
+
+		
+		# intra
+		#auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}"]
+		#auxV12 = ["a_{p}^{\dagger}", "a_{q}"]
+		
+		# inter
+		#auxV11 = ["a_{p}^{\dagger}", "a_{P}^{\dagger}","a_{q}","a_{Q}"]
+		auxV11 = ["a_{P}^{\dagger}", "a_{p}^{\dagger}","a_{Q}","a_{q}"]
+		# a-b
+		#auxV12 = ["a_{p}^{\dagger}", "a_{q}"]
+		# b-a
+		auxV12 = ["a_{P}^{\dagger}", "a_{Q}"]
+
+		factorA = (1.0/2.0)
+		factorB = (-1.0)
 
 		for i in range(0,len(allV)) :
 
@@ -267,13 +292,13 @@ def solveTerm (nmax,V0):
 			if operatorPosition == (len(allV[i].string)-1) :
 				V12 = copy.deepcopy(allV[i])
 
-				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				allV[i].sign = float(allV[i].sign*factorA)
 				#V1.sign = float(V1.sign*(1.0))
 				allV[i].scalar = [integralA]
 				allV[i].string = allV[i].string [:] + auxV11
 				del allV[i].string[operatorPosition]
 
-				V12.sign = float(V12.sign*(-1.0))
+				V12.sign = float(V12.sign*factorB)
 				V12.scalar = [integralB]
 				V12.string = V12.string [:] + auxV12
 				del V12.string[operatorPosition] #{V}
@@ -282,13 +307,13 @@ def solveTerm (nmax,V0):
 
 				V22 = copy.deepcopy(allV[i])
 
-				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				allV[i].sign = float(allV[i].sign*factorA)
 				#V2.sign = float(V2.sign*(1.0))
 				allV[i].scalar = [integralA]
 				allV[i].string = allV[i].string[:nXw] + auxV11 + \
 						V2.string[nXw+1:] #avoid V
 
-				V22.sign = float(V22.sign*(-1.0))
+				V22.sign = float(V22.sign*factorB)
 				V22.scalar = [integralB]
 				V22.string = V22.string[:nXw] + auxV12 + \
 						V22.string[nXw+1:] #avoid V
@@ -297,13 +322,13 @@ def solveTerm (nmax,V0):
 			elif operatorPosition == (nAyZ-1) and i == 2:
 
 				V32 = copy.deepcopy(allV[i])
-				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				allV[i].sign = float(allV[i].sign*factorA)
 				#V3.sign = float(V3.sign*(1.0))
 				allV[i].scalar = [integralA]
 				allV[i].string = allV[i].string[:nAyZ-1] + auxV11 + \
 						allV[i].string[nAyZ:] #avoid V
 
-				V32.sign = float(V32.sign*(-1.0))
+				V32.sign = float(V32.sign*factorB)
 				V32.scalar = [integralB]
 				V32.string = V32.string [:nAyZ-1] + auxV12 + \
 						V32.string[nAyZ:] #avoid V
@@ -313,14 +338,14 @@ def solveTerm (nmax,V0):
 
 				V42 = copy.deepcopy(allV[i])
 
-				allV[i].sign = float(allV[i].sign*(1.0/4.0))
+				allV[i].sign = float(allV[i].sign*factorA)
 				#V4.sign = float(V4.sign*(1.0))
 				allV[i].scalar = [integralA]
 
 				del allV[i].string[0] #{V}
 				allV[i].string = auxV11 + allV[i].string[:]
 
-				V42.sign = float(V42.sign*(-1.0))
+				V42.sign = float(V42.sign*factorB)
 				V42.scalar = [integralB]
 				del V42.string[0] #{V}
 				V42.string = auxV12 + V42.string[:]
@@ -332,13 +357,14 @@ def solveTerm (nmax,V0):
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
 		#allV = [V1,V2,V3,V4]
 		#allV = [V12,V22,V32,V42]
-		#for i in range(0,len(allV)) :
-		#	print i+1,allV[i].sign,allV[i].string
+		for i in range(0,len(allV)) :
+			print i+1,allV[i].sign,allV[i].string
 	newV = list()
 		
 	i = 0
 	for Vi in allV :
 		i = i + 1
+		#print "Vi", i
 		# Perform Wick's theorem
 		auxVi = wick.wick(Vi)
 		# save only the non zero terms	
@@ -374,10 +400,11 @@ def solveTerm (nmax,V0):
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	latexPrinting ( expandedTerms, "1" ) 
+	latexPrinting ( expandedTerms, "Step 1" ) 
+	#basicPrinting ( expandedTerms, "1" ) 
 
 	if "\hat{H}" in A : 
-		#print "call to apply deltas!"
+		#print "call to check deltas!"
 		expandedTerms = checkDeltas.checkDeltas (expandedTerms,	wX, yZ)
 
 	if "\hat{V}" in A : 
@@ -385,13 +412,17 @@ def solveTerm (nmax,V0):
 		expandedTerms = applydeltas.applyDeltas (expandedTerms)
 
 
+	latexPrinting ( expandedTerms, "Step 2" ) 
+
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
+	latexPrinting ( expandedTerms, "Step 3" ) 
+
 	if "\hat{V}" in A or "\hat{H}" in A: 
-	#if "\hat{V}" in A : 
-		#print "call to apply deltas!"
 		expandedTerms = removeExcitations.removeExcitations(expandedTerms)
+
+	latexPrinting ( expandedTerms, "Step 4" ) 
 
 	if "\hat{V}" in A : 
 		#print "call to apply deltas!"
@@ -401,7 +432,7 @@ def solveTerm (nmax,V0):
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	latexPrinting ( expandedTerms, "5" ) 
+	latexPrinting ( expandedTerms, "Step 5" ) 
 
 
 	if "\hat{V}" in A : 
@@ -410,7 +441,7 @@ def solveTerm (nmax,V0):
 
 
 	#basicPrinting ( expandedTerms, "5" ) 
-	latexPrinting ( expandedTerms, "6" ) 
+	latexPrinting ( expandedTerms, "Step 6" ) 
 
 	return expandedTerms
 
