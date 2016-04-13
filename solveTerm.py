@@ -121,39 +121,41 @@ def basicPrinting ( vector, n ) :
 def latexPrinting ( vector, n ) :
 
 	print "Result for term" + n
-	for i in vector : 
-		if i.sign > 0 :
-			print "+" + str(i.sign), 
-		else :
-			print i.sign,
-		if "||" in i.scalar or "|" in i.scalar:
-			print "\\langle", 
-			for k in i.scalar :
-				if len(k) == 1 :	
-					print k,
-				if len(k) == 2 and k.isalpha() :	
-					print k[0]+"_{"+k[1]+"}",
-				if len(k) == 2 and not k.isalpha() :	
-					print k,
+	if len(vector) > 0 :
+		for i in vector : 
+			if i.sign > 0 :
+				print "+" + str(i.sign), 
+			else :
+				print i.sign,
+			if "||" in i.scalar or "|" in i.scalar:
+				print "\\langle", 
+				for k in i.scalar :
+					if len(k) == 1 :	
+						print k,
+					if len(k) == 2 and k.isalpha() :	
+						print k[0]+"_{"+k[1]+"}",
+					if len(k) == 2 and not k.isalpha() :	
+						print k,
 
-			print "\\rangle", 
-		else : 
-			print i.scalar,
+				print "\\rangle", 
+			else : 
+				print i.scalar,
 
-		if len(i.chain) > 0 :
-			print "(",
-			for j in i.chain :
-				print j,
-			print ")"
-		else :
-			print ""
+			if len(i.chain) > 0 :
+				print "(",
+				for j in i.chain :
+					print j,
+				print ")"
+			else :
+				print ""
+	else :
+		print 0	
 	print "_"*20
 
 
 
 
 def solveTerm (nmax,V0):
-	#pQrS
 
 	# wX \hat{A} yZ element
 	# = [X^\dagger w^\dagger , \hat{A} y Z ]_+
@@ -161,18 +163,9 @@ def solveTerm (nmax,V0):
 	# = X^\dagger w^\dagger y Z A (1) - X^\dagger w^\dagger A y Z (2)  + 
 	# y Z A  X^\dagger w^\dagger (3) - A y Z  X^\dagger w^\dagger (4)
 
-	# x \hat{A} y element
-	# = [x^\dagger , \hat{A} y ]_+
-	# = x^\dagger \hat{A} y + \hat{A} y x^\dagger 
-	# = x^\dagger A (1) y - X^\dagger y A (2)  + 
-	# A y x^\dagger (3) - y A x^\dagger (4)
-
 	# Set the initial element
 	wX = V0.string[0]
 
-	#Xw = wX
-	#Xw.reverse()
-	
 	Xw = adjoint (wX)
 	
 	A = [V0.string[1][0]]
@@ -180,7 +173,7 @@ def solveTerm (nmax,V0):
 	AyZ = A + yZ
 	nXw = len(Xw)
 	nAyZ = len(AyZ)
-
+	#print "solve"
 	print Xw,A,yZ
 	#print nXw,nAyZ
 
@@ -249,45 +242,50 @@ def solveTerm (nmax,V0):
 				allV[i].scalar = allV[i].scalar + calculateEpsilon(allV[i].string[:nAyZ-1])
 				del allV[i].string[nAyZ-1]
 
-			print "H"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
+			#print "H"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
-	if "\hat{V}" in A : 
-		allV = [V1,V2,V3,V4] #we begin from these four
-
-	# Express perturbation operator
-	if "\hat{V}" in A : 
+	if "\hat{V}^{aa}" in A : 
 
 		# intra
-		#integralA = ["p","q","|","r","s"]
-		#integralB = ["p","q","|","r","q"]
+		integralA = ["p","q","||","r","s"]
+		integralB = ["p","qi","||","r","qi"]
+
+		# intra
+		auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
+		auxV12 = ["a_{p}^{\dagger}", "a_{r}"]
+
+		factorA = (1.0/4.0)
+		factorB = (-1.0)
+
+	if "\hat{V}^{ab}" in A : 
 
 		# a-b
-		#integralA = ["p","P","|","q","Q"]
-		#integralB = ["p","Pi","|","q","Pi"]
+		integralA = ["p","P","|","q","Q"]
+		integralB = ["p","Pi","|","q","Pi"]
 
 		# b-a
-		integralA = ["P","p","|","Q","q"]
-		integralB = ["P","pi","|","Q","pi"]
-
-		
-		# intra
-		#auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{r}","a_{s}"]
-		#auxV12 = ["a_{p}^{\dagger}", "a_{q}"]
+		#integralA = ["P","p","|","Q","q"]
+		#integralB = ["P","pi","|","Q","pi"]
 		
 		# inter
-		#auxV11 = ["a_{p}^{\dagger}", "a_{P}^{\dagger}","a_{q}","a_{Q}"]
-		auxV11 = ["a_{P}^{\dagger}", "a_{p}^{\dagger}","a_{Q}","a_{q}"]
+		auxV11 = ["a_{p}^{\dagger}", "a_{P}^{\dagger}","a_{q}","a_{Q}"]
+		#auxV11 = ["a_{P}^{\dagger}", "a_{p}^{\dagger}","a_{Q}","a_{q}"]
 		# a-b
-		#auxV12 = ["a_{p}^{\dagger}", "a_{q}"]
+		auxV12 = ["a_{p}^{\dagger}", "a_{q}"]
 		# b-a
-		auxV12 = ["a_{P}^{\dagger}", "a_{Q}"]
+		#auxV12 = ["a_{P}^{\dagger}", "a_{Q}"]
 
 		factorA = (1.0/2.0)
 		factorB = (-1.0)
 
+	# Express perturbation operator
+	if "\hat{V}" in A[0] : 
+
+		allV = [V1,V2,V3,V4] #we begin from these four
+
 		for i in range(0,len(allV)) :
 
-			operatorPosition = allV[i].string.index("\hat{V}")
+			operatorPosition = allV[i].string.index(A[0])
 
 			if operatorPosition == (len(allV[i].string)-1) :
 				V12 = copy.deepcopy(allV[i])
@@ -353,12 +351,12 @@ def solveTerm (nmax,V0):
 
 			#print "v"+str(i+1),allV[i].sign, allV[i].scalar, allV[i].string
 
-	if "\hat{V}" in A : 
+	if "\hat{V}" in A[0] : 
 		allV = [V1,V12,V2,V22,V3,V32,V4,V42]
 		#allV = [V1,V2,V3,V4]
 		#allV = [V12,V22,V32,V42]
-		for i in range(0,len(allV)) :
-			print i+1,allV[i].sign,allV[i].string
+		#for i in range(0,len(allV)) :
+		#	print i+1,allV[i].sign,allV[i].string
 	newV = list()
 		
 	i = 0
@@ -400,42 +398,42 @@ def solveTerm (nmax,V0):
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	latexPrinting ( expandedTerms, "Step 1" ) 
-	#basicPrinting ( expandedTerms, "1" ) 
+	#latexPrinting ( expandedTerms, "Step 1" ) 
 
 	if "\hat{H}" in A : 
 		#print "call to check deltas!"
 		expandedTerms = checkDeltas.checkDeltas (expandedTerms,	wX, yZ)
 
-	if "\hat{V}" in A : 
+	if "\hat{V}" in A[0] : 
 		#print "call to apply deltas!"
 		expandedTerms = applydeltas.applyDeltas (expandedTerms)
 
 
-	latexPrinting ( expandedTerms, "Step 2" ) 
+	#latexPrinting ( expandedTerms, "Step 2" ) 
 
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
-	latexPrinting ( expandedTerms, "Step 3" ) 
+	#latexPrinting ( expandedTerms, "Step 3" ) 
 
-	if "\hat{V}" in A or "\hat{H}" in A: 
+	if "\hat{V}" in A[0] or "\hat{H}" in A: 
 		expandedTerms = removeExcitations.removeExcitations(expandedTerms)
 
-	latexPrinting ( expandedTerms, "Step 4" ) 
+	#latexPrinting ( expandedTerms, "Step 4" ) 
 
-	if "\hat{V}" in A : 
+	if "\hat{V}" in A[0] : 
 		#print "call to apply deltas!"
 		expandedTerms = applydeltas.applyDeltas (expandedTerms)
 
 
+	#latexPrinting ( expandedTerms, "Step 4-5" ) 
 	# Sum all terms in the propagator matrix element
 	expandedTerms = sumTerms.sumTerms(expandedTerms)
 
 	latexPrinting ( expandedTerms, "Step 5" ) 
 
 
-	if "\hat{V}" in A : 
+	if "\hat{V}" in A[0] : 
 		#print "call to apply deltas!"
 		expandedTerms = checkDeltas.checkDeltas (expandedTerms,	wX, yZ)
 

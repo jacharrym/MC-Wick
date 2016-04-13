@@ -222,7 +222,6 @@ def applyDeltas (vector) :
 			includeExchange = False
 		else : 
 			integral = line1.scalar
-
 		auxLine1 = line1.chain # Split the deltas
 		auxIntegral = integral
 

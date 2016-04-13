@@ -140,6 +140,9 @@ def normalOrder ( vector, auxSign, fixIndex ) :
 			auxSign = auxSign * 1
 
 	if fixIndex :
+
+
+
 		# establish the order Cre(occupied,virtual,dummy) annih(occupied,virtual,dummy)
 		creationVector = list()
 		annihilationVector = list()
@@ -150,11 +153,9 @@ def normalOrder ( vector, auxSign, fixIndex ) :
 
 		# split the operator product
 		for operator in outputVector :
-			#print operator
 			i = index(operator)
 			# creation
 			if dagger(operator) == 1 :
-
 				if i in occupiedIndexes :
 					ii = occupiedIndexes.index(i)
 					creationVector[0].append(ii)
@@ -648,6 +649,7 @@ def wick (Vi) :
 
 		# Multiply :AB..: * :ab...:
 		matrixOfCombinations = multiplyVectors ( matrixOfCombinationsA, matrixOfCombinationsB )
+
 	#print "mult end"
 	# Now we save the sign and scalar
 	for i in range(0,len(matrixOfCombinations)):
@@ -657,32 +659,13 @@ def wick (Vi) :
 			matrixOfCombinations[i][j].scalar = Vi.scalar
 
 	#		print  matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
-	return matrixOfCombinations
 
+	return matrixOfCombinations
 
 ################################################
 
-#V0 = subOperators(-0.25, ['a_{i}^{\dagger}', 'a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
-#V0 = subOperators(0.25, ['a_{i}^{\\dagger}', 'a_{p}^{\\dagger}', 'a_{q}^{\\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'],"")
-
-#V0 = subOperators(-0.25, ['a_{j}', 'a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}'],"")
-#V0 = subOperators(0.25, ['a_{p}^{\dagger}', 'a_{q}^{\dagger}', 'a_{s}', 'a_{r}', 'a_{j}'],"")
-#
-#V0 = subOperators(1.0, ['a_{j}', 'a_{p}^{\dagger}', 'a_{r}'],"")
-#V0 = subOperators(-1.0, ['a_{p}^{\dagger}', 'a_{r}', 'a_{j}'],"")
-
-
-V0 = subOperators(-1.0, ['a_{r}', 'a_{s}','a_{p}^{\dagger}', 'a_{q}^{\dagger}'],"")
-wick (V0)
+#V0 = subOperators(-1.0, ['a_{r}', 'a_{s}','a_{p}^{\dagger}', 'a_{q}^{\dagger}'],"")
+#wick (V0)
 #V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
 #wick (V0)
-
-#V1 = subOperators (-1,[V0.string[1], V0.string[0], V0.string[3], V0.string[4], V0.string[2]], "" )
-#if "{H}" in V1.string[4] :
-#	V1.scalar = "E"
-#	del V1.string[4]
-
-# call wick
-
-
 
