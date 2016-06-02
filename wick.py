@@ -45,6 +45,41 @@ occupiedIndexesB = ("I","J","K","L","M","N","O","Pi","Qi","Ri","Si")
 virtualIndexesB = ("A","B","C","D","E","F","G","H","Pa","Qa","Ra","Sa")
 dummyIndexesB = ("P","Q","R","S")
 
+def latexPrinting ( vector, n ) :
+
+	print "Result for term" + n
+	if len(vector) > 0 :
+		for i in vector : 
+			if i.sign > 0 :
+				print "+" + str(i.sign), 
+			else :
+				print i.sign,
+			if "||" in i.scalar or "|" in i.scalar:
+				print "\\langle", 
+				for k in i.scalar :
+					if len(k) == 1 :	
+						print k,
+					if len(k) == 2 and k.isalpha() :	
+						print k[0]+"_{"+k[1]+"}",
+					if len(k) == 2 and not k.isalpha() :	
+						print k,
+
+				print "\\rangle", 
+			else : 
+				print i.scalar,
+
+			if len(i.chain) > 0 :
+				print "(",
+				for j in i.chain :
+					print j,
+				print ")"
+			else :
+				print ""
+	else :
+		print 0	
+	print "_"*20
+
+
 
 ## subOperators
 class subOperators(object):
@@ -658,7 +693,7 @@ def wick (Vi) :
 			matrixOfCombinations[i][j].sign = matrixOfCombinations[i][j].sign * Vi.sign
 			matrixOfCombinations[i][j].scalar = Vi.scalar
 
-	#		print  matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
+			#print  matrixOfCombinations[i][j].sign, matrixOfCombinations[i][j].chain
 
 	return matrixOfCombinations
 
@@ -666,6 +701,11 @@ def wick (Vi) :
 
 #V0 = subOperators(-1.0, ['a_{r}', 'a_{s}','a_{p}^{\dagger}', 'a_{q}^{\dagger}'],"")
 #wick (V0)
-#V0 = subOperators (+1,['a_{a}^{\dagger}', 'a_{m}'],"")
-#wick (V0)
+#V0 = subOperators (+1,['a_{i}^{\dagger}', 'a_{a}','a_{p}^{\dagger}', 'a_{q}','a_{b}^{\dagger}', 'a_{j}'],"")
+#V0 = subOperators (+1,['a_{i}^{\dagger}', 'a_{a}','a_{pi}^{\dagger}', 'a_{qi}','a_{b}^{\dagger}', 'a_{j}'],"")
+#V0 = subOperators (+1,['a_{i}^{\dagger}', 'a_{a}','a_{pi}^{\dagger}','a_{ri}^{\dagger}', 'a_{qi}', 'a_{si}','a_{b}^{\dagger}', 'a_{j}'],"")
+#outputV0 = wick (V0)
+
+#for i in outputV0 :
+#	latexPrinting ( i, "1" )
 

@@ -84,7 +84,7 @@ def symbolOfSign (sign) :
 		return "+"
 	elif sign == -1.0:
 		return "-"
-def setIndex ( integral, vector, sign, exchange ) :
+def setIndex ( integral, vector, sign, exchange, nCenters ) :
 
 	dummyIndexA = ("p","q","r","s")	
 	dummyIndexB = ("P","Q","R","S")	
@@ -144,7 +144,7 @@ def setIndex ( integral, vector, sign, exchange ) :
 
 		if auxvector[m] == "delta" :
 			vector[m] = "\delta_{"+auxindexvector[m]+"}"
-	if exchange :
+	if exchange and nCenters == 4:
 		i = integral[0]
 		j = integral[1]
 		k = integral[2]
@@ -177,7 +177,7 @@ def setIndex ( integral, vector, sign, exchange ) :
 
 		integral = ij + ["||"] + kl
 
-	else :
+	elif not exchange and nCenters == 4:
 		i = integral[0]
 		j = integral[1]
 		k = integral[2]
@@ -188,12 +188,28 @@ def setIndex ( integral, vector, sign, exchange ) :
 		kk = order[lower(k)[0]]
 		ll = order[lower(l)[0]]
 
-		ij = [i,j]
-		kl = [k,l]
+		if jj < ii  :
+			ij = [j,i]	
+			kl = [l,k]
+		else :
+			ij = [i,j]
+			kl = [k,l]
 
 		integral = ij + ["|"] + kl
+	elif not exchange and nCenters == 2:
 
-	return integral, vector, sign, exchange	
+		i = integral[0]
+		j = integral[1]
+
+		ii = order[lower(i)[0]]	
+		jj = order[lower(j)[0]]
+
+		ij = [i,j]
+
+		integral = [i] + ["|"] + [j]
+
+
+	return integral, vector, sign, exchange, nCenters
 
 def applyDeltas (vector) :
 
@@ -209,19 +225,29 @@ def applyDeltas (vector) :
 		sign1 = line1.sign
 
 
-		if "||" in line1.scalar :
+		if "||" in line1.scalar and len(line1.scalar) == 4+1 :
 			integral = line1.scalar
 			#integral = integral.split(",")
 			del integral[integral.index("||")]
 			includeExchange = True
-		elif "|" in line1.scalar : ##?
+			nCenters = 4
+		elif "|" in line1.scalar and len(line1.scalar) == 4+1 :
 
 			integral = line1.scalar
 			#integral = integral.split(",")
 			del integral[integral.index("|")]
 			includeExchange = False
+			nCenters = 4
+
+		elif "|" in line1.scalar and len(line1.scalar) == 2+1 :
+			integral = line1.scalar
+			#integral = integral.split(",")
+			del integral[integral.index("|")]
+			includeExchange = False
+			nCenters = 2
 		else : 
 			integral = line1.scalar
+			nCenters = 4
 		auxLine1 = line1.chain # Split the deltas
 		auxIntegral = integral
 
@@ -280,7 +306,7 @@ def applyDeltas (vector) :
 			else: 
 				addDelta.append (j)
 				#addDelta = addDelta + j
-		auxIntegral, addDelta, sign1, exchange = setIndex(auxIntegral, addDelta, sign1,includeExchange)
+		auxIntegral, addDelta, sign1, exchange, nCenters = setIndex(auxIntegral, addDelta, sign1,includeExchange, nCenters)
 
 		if not sign1 == 0 :
 			auxVector.append (operatorchain (sign1, addDelta, auxIntegral) )

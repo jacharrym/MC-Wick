@@ -254,6 +254,14 @@ def solveTerm (nmax,V0):
 		auxV11 = ["a_{p}^{\dagger}", "a_{q}^{\dagger}","a_{s}","a_{r}"]
 		auxV12 = ["a_{p}^{\dagger}", "a_{r}"]
 
+		#integralA = ["P","Q","||","R","S"]
+		#integralB = ["P","Qi","||","R","Qi"]
+
+		# intra
+		#auxV11 = ["a_{P}^{\dagger}", "a_{Q}^{\dagger}","a_{S}","a_{R}"]
+		#auxV12 = ["a_{P}^{\dagger}", "a_{R}"]
+
+
 		factorA = (1.0/4.0)
 		factorB = (-1.0)
 
